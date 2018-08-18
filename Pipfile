@@ -10,7 +10,9 @@ django = "*"
 "psycopg2" = "*"
 graphene-django = "*"
 django-cors-headers = "*"
-social-auth-app-django = "*"
+pylint-django = "*"
+black = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.7"
