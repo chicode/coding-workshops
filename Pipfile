@@ -11,8 +11,8 @@ django = "*"
 graphene-django = "*"
 django-cors-headers = "*"
 pylint-django = "*"
-black = "*"
 pylint = "*"
+yapf = "*"
 
 [requires]
 python_version = "3.7"
