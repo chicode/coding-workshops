@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'graphene_django',
 
-    'codingworkshops.ingredients'
+    'codingworkshops.workshops'
 ]
 
 MIDDLEWARE = [

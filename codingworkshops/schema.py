@@ -1,9 +1,9 @@
 import graphene
 
-import codingworkshops.ingredients.schema
+import codingworkshops.workshops.schema
 
 
-class Query(codingworkshops.ingredients.schema.Query, graphene.ObjectType):
+class Query(codingworkshops.workshops.schema.Query, graphene.ObjectType):
     # This class will inherit from multiple Queries
     # as we begin to add more apps to our project
     pass
