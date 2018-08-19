@@ -23,6 +23,12 @@ class Query(graphene.ObjectType):
     def resolve_user(self, info, **kwargs):
         return User.objects.get(username=kwargs.get('username'))
 
+    def resolve_me(self, info, **kwargs):
+        if info.context.user.is_authenticated:
+            return info.context.user
+        else:
+            return None
+
 
 class LoginUser(graphene.Mutation):
     class Arguments:
