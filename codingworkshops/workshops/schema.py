@@ -13,7 +13,8 @@ class WorkshopType(DjangoObjectType):
 class Query(graphene.ObjectType):
     all_workshops = graphene.List(WorkshopType)
     workshop = graphene.Field(
-        WorkshopType, name=graphene.String(required=True))
+        WorkshopType, name=graphene.String(required=True)
+    )
 
     def resolve_all_workshops(self, info, **kwargs):
         return Workshop.objects.all()
@@ -29,9 +30,8 @@ class CreateWorkshop(graphene.Mutation):
 
     Output = WorkshopType
 
-    def mutate(self, info, input):
-        return Workshop.objects.create(
-            name=input.name, description=input.description)
+    def mutate(self, info, name, description):
+        return Workshop.objects.create(name=name, description=description)
 
 
 class Mutation(graphene.ObjectType):
