@@ -6,8 +6,8 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /codingworkshops
 
 RUN pip install pipenv
-COPY ./Pipfile
-COPY ./Pipfile.lock
+COPY ./Pipfile Pipfile
+COPY ./Pipfile.lock Pipfile.lock
 RUN pipenv install
 
-COPY . /codingworkshops/
+COPY . /
