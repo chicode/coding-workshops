@@ -15,7 +15,7 @@ class UserType(DjangoObjectType):
 class Query(graphene.ObjectType):
     all_users = graphene.List(UserType)
     user = graphene.Field(UserType, username=graphene.String(required=True))
-    me = graphene.Field(UserType)
+    current_user = graphene.Field(UserType)
 
     def resolve_all_users(self, info, **kwargs):
         return User.objects.all()
@@ -23,11 +23,10 @@ class Query(graphene.ObjectType):
     def resolve_user(self, info, **kwargs):
         return User.objects.get(username=kwargs.get('username'))
 
-    def resolve_me(self, info, **kwargs):
+    def resolve_current_user(self, info, **kwargs):
         if info.context.user.is_authenticated:
             return info.context.user
-        else:
-            return None
+        return None
 
 
 class LoginUser(graphene.Mutation):
@@ -39,12 +38,11 @@ class LoginUser(graphene.Mutation):
 
     def mutate(self, info, username, password):
         # info.context is the django request
-        user = authenticate(username=username, password=password)
+        user = authenticate(info.context, username=username, password=password)
         if user is not None:
             login(info.context, user)
             return LoginUser(ok=True)
-        else:
-            return LoginUser(ok=False)
+        return LoginUser(ok=False)
 
 
 class LogoutUser(graphene.Mutation):
