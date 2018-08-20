@@ -60,7 +60,6 @@ class CreateUserErrors(graphene.ObjectType):
     password = graphene.List(graphene.NonNull(graphene.String))
     email = graphene.List(graphene.NonNull(graphene.String))
     bio = graphene.List(graphene.NonNull(graphene.String))
-    birth_date = graphene.List(graphene.NonNull(graphene.String))
     location = graphene.List(graphene.NonNull(graphene.String))
 
 
@@ -70,7 +69,6 @@ class CreateUser(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
         bio = graphene.String()
-        birth_date = graphene.types.datetime.Date()
         location = graphene.String()
 
     ok = graphene.Boolean(required=True)
@@ -83,7 +81,6 @@ class CreateUser(graphene.Mutation):
             email=email,
             # because these are optional
             bio=kwargs.get('bio'),
-            birth_date=kwargs.get('birth_date'),
             location=kwargs.get('location')
         )
 
@@ -95,6 +92,7 @@ class CreateUser(graphene.Mutation):
             )
 
         user.save()
+        login(info.context, user)
         return CreateUser(ok=True)
 
 
