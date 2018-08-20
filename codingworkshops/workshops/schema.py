@@ -25,8 +25,8 @@ class Query(graphene.ObjectType):
 
 
 class CreateWorkshopErrors(graphene.ObjectType):
-    name = graphene.String()
-    description = graphene.String()
+    name = graphene.List(graphene.NonNull(graphene.String))
+    description = graphene.List(graphene.NonNull(graphene.String))
 
 
 class CreateWorkshop(graphene.Mutation):

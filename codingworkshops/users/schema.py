@@ -54,13 +54,14 @@ class LogoutUser(graphene.Mutation):
         return LoginUser(ok=True)
 
 
+# so much boilerplate! grrr
 class CreateUserErrors(graphene.ObjectType):
-    username = graphene.String()
-    password = graphene.String()
-    email = graphene.String()
-    bio = graphene.String()
-    birth_date = graphene.String()
-    location = graphene.String()
+    username = graphene.List(graphene.NonNull(graphene.String))
+    password = graphene.List(graphene.NonNull(graphene.String))
+    email = graphene.List(graphene.NonNull(graphene.String))
+    bio = graphene.List(graphene.NonNull(graphene.String))
+    birth_date = graphene.List(graphene.NonNull(graphene.String))
+    location = graphene.List(graphene.NonNull(graphene.String))
 
 
 class CreateUser(graphene.Mutation):
