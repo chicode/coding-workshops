@@ -1,12 +1,13 @@
 import graphene
-from graphene_django.types import DjangoObjectType
+import graphene_django.types
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 
 from .models import User
 
 
-class UserType(DjangoObjectType):
+class UserType(graphene_django.types.DjangoObjectType):
     class Meta:
         model = User
         exclude_fields = ['password']
@@ -34,7 +35,7 @@ class LoginUser(graphene.Mutation):
         username = graphene.String(required=True)
         password = graphene.String(required=True)
 
-    ok = graphene.Boolean()
+    ok = graphene.Boolean(required=True)
 
     def mutate(self, info, username, password):
         # info.context is the django request
@@ -46,11 +47,20 @@ class LoginUser(graphene.Mutation):
 
 
 class LogoutUser(graphene.Mutation):
-    ok = graphene.Boolean()
+    ok = graphene.Boolean(required=True)
 
     def mutate(self, info):
         logout(info.context)
         return LoginUser(ok=True)
+
+
+class CreateUserErrors(graphene.ObjectType):
+    username = graphene.String()
+    password = graphene.String()
+    email = graphene.String()
+    bio = graphene.String()
+    birth_date = graphene.String()
+    location = graphene.String()
 
 
 class CreateUser(graphene.Mutation):
@@ -62,10 +72,11 @@ class CreateUser(graphene.Mutation):
         birth_date = graphene.types.datetime.Date()
         location = graphene.String()
 
-    Output = UserType
+    ok = graphene.Boolean(required=True)
+    errors = graphene.Field(CreateUserErrors)
 
     def mutate(self, info, username, password, email, **kwargs):
-        return User.objects.create_user(
+        user = User(
             username=username,
             password=password,
             email=email,
@@ -74,6 +85,16 @@ class CreateUser(graphene.Mutation):
             birth_date=kwargs.get('birth_date'),
             location=kwargs.get('location')
         )
+
+        try:
+            user.full_clean()
+        except ValidationError as e:
+            return CreateUser(
+                ok=False, errors=CreateUserErrors(**e.message_dict)
+            )
+
+        user.save()
+        return CreateUser(ok=True)
 
 
 class Mutation(graphene.ObjectType):

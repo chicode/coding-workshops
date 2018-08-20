@@ -1,11 +1,12 @@
 import graphene
+import graphene_django.types
 
-from graphene_django.types import DjangoObjectType
+from django.core.exceptions import ValidationError
 
 from .models import Workshop
 
 
-class WorkshopType(DjangoObjectType):
+class WorkshopType(graphene_django.types.DjangoObjectType):
     class Meta:
         model = Workshop
 
@@ -23,15 +24,31 @@ class Query(graphene.ObjectType):
         return Workshop.objects.get(name=kwargs.get("name"))
 
 
+class CreateWorkshopErrors(graphene.ObjectType):
+    name = graphene.String()
+    description = graphene.String()
+
+
 class CreateWorkshop(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
         description = graphene.String(required=True)
 
-    Output = WorkshopType
+    ok = graphene.Boolean(required=True)
+    errors = graphene.Field(CreateWorkshopErrors)
 
     def mutate(self, info, name, description):
-        return Workshop.objects.create(name=name, description=description)
+        workshop = Workshop(name=name, description=description)
+
+        try:
+            workshop.full_clean()
+        except ValidationError as e:
+            return CreateWorkshop(
+                ok=False, errors=CreateWorkshopErrors(**e.message_dict)
+            )
+
+        workshop.save()
+        return CreateWorkshop(ok=True)
 
 
 class Mutation(graphene.ObjectType):
