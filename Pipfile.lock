@@ -88,7 +88,7 @@
                 "sha256:b9c40e9750f3d77e6e4d441d8b0266cf555e7cdabdcff33c4fd06366ca761ef8",
                 "sha256:ec9ef8f4a9bc6f71eec99e1806bfa2de401650d996c59330782b89a5555c1497"
             ],
-            "markers": "python_version != '3.0.*' and python_version >= '2.7' and python_version != '3.2.*' and python_version != '3.3.*' and python_version != '3.1.*'",
+            "markers": "python_version != '3.2.*' and python_version != '3.1.*' and python_version != '3.3.*' and python_version >= '2.7' and python_version != '3.0.*'",
             "version": "==4.3.4"
         },
         "lazy-object-proxy": {
@@ -185,11 +185,11 @@
         },
         "pylint-django": {
             "hashes": [
-                "sha256:5c5a20c443b4e70fdc8c47e42cff8ce79c953954e918f8e559f6e1d05a971585",
-                "sha256:70f2b5397aa2468373fcf87d64a700b359050e905e56e2dbaf954e6edb04c593"
+                "sha256:10dc93b443b77f549f2fe605a01f7ce9ff1a1fe9340e63a37c7b34f5b7ed530f",
+                "sha256:3950201e5b02c03d6498fcf286542d4fc212095029a403360269d16fab1e9f3f"
             ],
             "index": "pypi",
-            "version": "==2.0"
+            "version": "==2.0.1"
         },
         "pylint-plugin-utils": {
             "hashes": [

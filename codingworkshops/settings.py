@@ -150,3 +150,6 @@ AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', )
 # as Django keeps track of logged in users through the session cookie on every request
 # see https://docs.djangoproject.com/en/2.1/topics/http/sessions/#module-django.contrib.sessions
 SESSION_COOKIE_SAMESITE = None
+
+# This is necessary for exporting schema.json
+GRAPHENE = {'SCHEMA': 'codingworkshops.schema.schema'}

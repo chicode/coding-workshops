@@ -1,17 +1,19 @@
 from django.db import models
+from codingworkshops.users.models import User
 
 
 class Workshop(models.Model):
-    name = models.CharField(max_length=50, unique=True, primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=500)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
 class Lesson(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-    description = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=100, blank=True)
     workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
 
 
