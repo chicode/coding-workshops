@@ -1,9 +1,15 @@
 # Coding Workshops
 
-To install: `docker-compose build`
+The backend is contained in a docker-compose instance with three images: the database, django application, and docker instance. The third image is responsible for running code in an isolated environment.
 
-To start: `docker-compose up`
+Currently, the only code transpilation that is supported is F# to JS. This is done through the Fable docker image, which is managed by [git-subrepo](https://github.com/ingydotnet/git-subrepo), a less confusing alternative to git-submodules.
 
-To run any other command: `docker-compose run web pipenv run /codingworkshops/manage.py [COMMAND]`
-If there is a better way, please commit it ASAP.
+## Run
+`docker-compose up --build`
+
+## Run django command
+`docker-compose run web pipenv run /codingworkshops/manage.py [COMMAND]`
+
+## Launch Docker-in-Docker shell
+`docker-compose run docker sh`
 
