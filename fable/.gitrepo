@@ -1,0 +1,13 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/outkine/minimal-fable-boilerplate
+	branch = master
+	commit = fff925459a63b85ce12955a4b4ee840f4fc0b18c
+	parent = d0e3271f6bcd774037af587b2395ee0629b4f1a0
+	method = merge
+	update = auto
+	cmdver = 0.4.1

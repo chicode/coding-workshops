@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "node compile.js",
+    "postinstall": "dotnet restore",
+    "compile": "cd src && dotnet fable npm-build"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "fable-utils": "^1.2.0"
+  }
+}
