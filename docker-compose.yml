@@ -5,7 +5,7 @@ services:
     image: docker:dind
     privileged: true
     volumes:
-      - .:/codingworkshops/fable
+      - ./fable:/fable:ro
     ports:
       - 2375:2375
 
@@ -14,10 +14,8 @@ services:
 
   web:
     build: .
-    command: pipenv run /codingworkshops/manage.py migrate
-    command: pipenv run /codingworkshops/manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/codingworkshops
+      - ./codingworkshops:/codingworkshops/codingworkshops
     ports:
       - 8000:8000
     environment:

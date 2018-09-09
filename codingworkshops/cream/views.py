@@ -10,7 +10,7 @@ if 'fable' not in [
     image.tags[0].split(':')[0] for image in images if len(image.tags)
 ]:
     print('BUILDING FABLE IMAGE')
-    for line in api_client.build(path='/codingworkshops/fable', tag='fable'):
+    for line in api_client.build(path='/fable', tag='fable'):
         for key, value in json.loads(line).items():
             print(f'{key}: {value}')
 """

@@ -10,5 +10,10 @@ COPY ./Pipfile Pipfile
 COPY ./Pipfile.lock Pipfile.lock
 RUN pipenv install
 
-COPY . .
+COPY ./codingworkshops codingworkshops
+COPY ./manage.py .
+
+CMD pipenv run ./manage.py runserver 0.0.0.0:8000
+EXPOSE 8000
+
 
