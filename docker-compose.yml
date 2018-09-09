@@ -6,8 +6,6 @@ services:
     privileged: true
     volumes:
       - ./fable:/fable:ro
-    ports:
-      - 2375:2375
 
   db:
     image: postgres:10.1-alpine
@@ -15,7 +13,7 @@ services:
   web:
     build: .
     volumes:
-      - ./codingworkshops:/codingworkshops/codingworkshops
+      - ./codingworkshops:/codingworkshops/codingworkshops:ro
     ports:
       - 8000:8000
     environment:
