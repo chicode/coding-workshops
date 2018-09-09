@@ -1,6 +1,14 @@
 version: '3.6'
 
 services:
+  docker:
+    image: docker:dind
+    privileged: true
+    volumes:
+      - .:/codingworkshops/fable
+    ports:
+      - 2375:2375
+
   db:
     image: postgres:10.1-alpine
 
@@ -16,3 +24,4 @@ services:
       - SECRET_KEY=changemeinprod
     depends_on:
       - db
+      - docker

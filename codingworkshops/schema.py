@@ -4,6 +4,7 @@ import codingworkshops.workshops.query
 import codingworkshops.workshops.mutation
 import codingworkshops.users.query
 import codingworkshops.users.mutation
+import codingworkshops.cream.views
 
 
 class Query(
