@@ -12,4 +12,5 @@ Currently, the only code transpilation that is supported is F# to JS. This is do
 
 ## Launch Docker-in-Docker shell
 `docker-compose run docker sh`
-
+THEN
+`docker --host docker [COMMAND]`
