@@ -2044,9 +2044,9 @@ parcel-bundler@^1.5.0:
     worker-farm "^1.4.1"
     ws "^3.3.3"
 
-parcel-plugin-fable-cream@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/parcel-plugin-fable-cream/-/parcel-plugin-fable-cream-1.5.1.tgz#5a0e1b6bcf21c7ff3fee817a679c14bd13f7b52d"
+parcel-plugin-fable-cream@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/parcel-plugin-fable-cream/-/parcel-plugin-fable-cream-1.5.2.tgz#e4a26f16dabec96f09832c0473ed76a4a68176f6"
   dependencies:
     babylon-walk "^1.0.2"
     fable-utils "^1.0.6"
