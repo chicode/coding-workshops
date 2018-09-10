@@ -47,5 +47,5 @@ async function parse(path, isProjectFile = false) {
 
 parse(path_.join(__dirname, 'src/FableDemo.fsproj'), true)
 parse(path_.join(__dirname, 'src/FableDemo.fs')).then((result) =>
-  console.log('RESULT:', JSON.stringify(result)),
+  console.log('RESULT', JSON.stringify(result)),
 )
