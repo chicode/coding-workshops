@@ -1,0 +1,13 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/outkine/parcel-plugin-fable
+	branch = master
+	commit = bc121c47c46c5e66b9b888d73e3e9847896f1dd3
+	parent = f674d2dd46f7c1ec828d583ea6d2ffcba552450a
+	method = merge
+	update = auto
+	cmdver = 0.4.1
