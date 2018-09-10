@@ -1,4 +1,4 @@
-import tarfile, gzip, json, time, io
+import tarfile, gzip, json, time, io, re
 
 import docker
 import graphene
@@ -62,9 +62,8 @@ class CompileCode(graphene.Mutation):
         if (language == 1):
             container = client.containers.create(
                 image='fable',
-                command='yarn compile',
+                command=['yarn', 'compile'],
                 detach=True,
-                remove=True,
                 auto_remove=True,
                 privileged=False,
             )
@@ -75,17 +74,26 @@ class CompileCode(graphene.Mutation):
 
             container.start()
 
-            result = None
+            logs = {}
+            code_data = False
+            code = []
 
             for log in container.logs(stream=True):
                 log = log.decode('utf-8')
-                if log.startswith('RESULT'):
-                    result = json.loads(log[len('RESULT'):])
+                print(log)
+                if log.startswith('DATA'):
+                    logs = json.loads(log[len('DATA'):])
+                elif log.startswith('CODE'):
+                    code_data = True
+                elif code_data:
+                    code.append(log)
 
-            if not result:
-                raise Exception('Transpiler did not return a result!')
+            if 'error' in logs:
+                return CompileCode(success=False, **logs)
 
-            return CompileCode(**result)
+            code[-1] = re.search('.*?(?=Done in)', code[-1]).group(0)
+
+            return CompileCode(success=True, code=''.join(code), *logs)
 
 
 class Mutation(graphene.ObjectType):
