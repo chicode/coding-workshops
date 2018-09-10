@@ -4,7 +4,8 @@ import codingworkshops.workshops.query
 import codingworkshops.workshops.mutation
 import codingworkshops.users.query
 import codingworkshops.users.mutation
-import codingworkshops.cream.views
+
+import codingworkshops.cream.mutation
 
 
 class Query(
@@ -18,7 +19,8 @@ class Query(
 
 class Mutation(
     codingworkshops.workshops.mutation.Mutation,
-    codingworkshops.users.mutation.Mutation, graphene.ObjectType
+    codingworkshops.users.mutation.Mutation,
+    codingworkshops.cream.mutation.Mutation, graphene.ObjectType
 ):
     pass
 
