@@ -20,11 +20,11 @@ class Lesson(models.Model):
 class Slide(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
+    staring_code = models.TextField()
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
 
 class Direction(models.Model):
     description = models.CharField(max_length=500)
     hint = models.CharField(max_length=50)
-    correct_code = models.TextField()
     slide = models.ForeignKey(Slide, on_delete=models.CASCADE)

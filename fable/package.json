@@ -1,12 +1,16 @@
 {
   "private": true,
   "scripts": {
-    "build": "node compile.js",
+    "build": "yarn dotnet:run-script js:build",
+    "clean": "rm -rf .cache dist src/bin src/obj",
+    "dotnet:run-script": "cd src && dotnet fable yarn-run",
+    "js:build": "parcel build src/index.html",
+    "js:start": "parcel src/index.html",
     "postinstall": "dotnet restore",
-    "compile": "cd src && dotnet fable npm-build"
+    "start": "yarn dotnet:run-script js:start"
   },
-  "dependencies": {
-    "babel-core": "^6.26.3",
-    "fable-utils": "^1.2.0"
+  "devDependencies": {
+    "parcel-bundler": "^1.5.0",
+    "parcel-plugin-fable-cream": "^1.5.1"
   }
 }

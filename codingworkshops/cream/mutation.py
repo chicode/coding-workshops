@@ -64,6 +64,9 @@ class CompileCode(graphene.Mutation):
                 image='fable',
                 command='yarn compile',
                 detach=True,
+                remove=True,
+                auto_remove=True,
+                privileged=False,
             )
 
             copy_to_container(
@@ -78,8 +81,6 @@ class CompileCode(graphene.Mutation):
                 log = log.decode('utf-8')
                 if log.startswith('RESULT'):
                     result = json.loads(log[len('RESULT'):])
-
-            container.remove()
 
             if not result:
                 raise Exception('Transpiler did not return a result!')

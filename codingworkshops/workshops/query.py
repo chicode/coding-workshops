@@ -38,17 +38,11 @@ class Query(graphene.ObjectType):
     def resolve_workshop(self, info, name):
         return Workshop.objects.get(name=name)
 
-    all_lessons = graphene.List(
-        LessonType, workshop=graphene.String(required=True)
-    )
     lesson = graphene.Field(
         LessonType,
         workshop_name=graphene.String(required=True),
         name=graphene.String(required=True),
     )
-
-    def resolve_all_lessons(self, info, workshop):
-        return Lesson.objects.get(workshop__name=workshop)
 
     def resolve_lesson(self, info, workshop, name):
         try:
@@ -56,22 +50,12 @@ class Query(graphene.ObjectType):
         except ObjectDoesNotExist:
             return None
 
-    all_slides = graphene.List(
-        SlideType,
-        workshop=graphene.String(required=True),
-        lesson=graphene.String(required=True),
-    )
     slide = graphene.Field(
         SlideType,
         workshop=graphene.String(required=True),
         lesson=graphene.String(required=True),
         id=graphene.ID(required=True)
     )
-
-    def resolve_all_slides(self, info, workshop, lesson):
-        return Slide.objects.filter(
-            lesson__workshop__name=workshop, lesson__name=lesson
-        )
 
     def resolve_slide(self, info, workshop, lesson, id):
         try:
