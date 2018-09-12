@@ -13,7 +13,7 @@ services:
   web:
     build: .
     volumes:
-      - ./codingworkshops:/codingworkshops/codingworkshops:ro
+      - ./codingworkshops:/codingworkshops/codingworkshops
     ports:
       - 8000:8000
     environment:

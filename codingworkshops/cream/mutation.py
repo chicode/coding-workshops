@@ -3,18 +3,6 @@ import tarfile, gzip, json, time, io, re
 import docker
 import graphene
 
-client = docker.DockerClient(base_url='tcp://docker:2375')
-api_client = docker.APIClient(base_url='tcp://docker:2375')
-
-images = client.images.list()
-if 'fable' not in [
-    image.tags[0].split(':')[0] for image in images if len(image.tags)
-]:
-    print('BUILDING FABLE IMAGE')
-    for line in api_client.build(path='/fable', tag='fable'):
-        for key, value in json.loads(line).items():
-            print(f'{key}: {value}')
-
 
 def copy_to_container(container, name, file_data, path):
     with create_archive(name, file_data) as archive:
@@ -60,6 +48,7 @@ class CompileCode(graphene.Mutation):
 
     def mutate(self, info, language, code):
         if (language == 1):
+            client = docker.DockerClient(base_url='tcp://docker:2375')
             container = client.containers.create(
                 image='fable',
                 command=['yarn', 'compile'],
