@@ -29,38 +29,38 @@ class DirectionType(graphene_django.types.DjangoObjectType):
 class Query(graphene.ObjectType):
     all_workshops = graphene.List(WorkshopType)
     workshop = graphene.Field(
-        WorkshopType, name=graphene.String(required=True)
+        WorkshopType, workshop=graphene.String(required=True)
     )
 
     def resolve_all_workshops(self, info):
         return Workshop.objects.all()
 
-    def resolve_workshop(self, info, name):
-        return Workshop.objects.get(name=name)
+    def resolve_workshop(self, info, workshop):
+        return Workshop.objects.get(name=workshop)
 
     lesson = graphene.Field(
         LessonType,
-        workshop_name=graphene.String(required=True),
-        name=graphene.String(required=True),
+        workshop=graphene.String(required=True),
+        lesson=graphene.ID(required=True),
     )
 
-    def resolve_lesson(self, info, workshop, name):
+    def resolve_lesson(self, info, workshop, lesson):
         try:
-            return Lesson.objects.get(workshop__name=workshop, name=name)
+            return Lesson.objects.get(workshop__name=workshop, id=lesson)
         except ObjectDoesNotExist:
             return None
 
     slide = graphene.Field(
         SlideType,
         workshop=graphene.String(required=True),
-        lesson=graphene.String(required=True),
-        id=graphene.ID(required=True)
+        lesson=graphene.ID(required=True),
+        slide=graphene.ID(required=True)
     )
 
-    def resolve_slide(self, info, workshop, lesson, id):
+    def resolve_slide(self, info, workshop, lesson, slide):
         try:
             return Slide.objects.get(
-                workshop__name=workshop, lesson_name=lesson, id=id
+                lesson__workshop__name=workshop, lesson__id=lesson, id=slide
             )
         except ObjectDoesNotExist:
             return None

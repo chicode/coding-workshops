@@ -20,7 +20,7 @@ class Lesson(models.Model):
 class Slide(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
-    staring_code = models.TextField()
+    starting_code = models.TextField(default='')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
 
