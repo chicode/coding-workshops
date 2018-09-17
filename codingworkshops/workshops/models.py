@@ -26,5 +26,5 @@ class Slide(models.Model):
 
 class Direction(models.Model):
     description = models.CharField(max_length=500)
-    hint = models.CharField(max_length=50)
+    hint = models.CharField(max_length=50, blank=True)
     slide = models.ForeignKey(Slide, on_delete=models.CASCADE)
