@@ -4,8 +4,6 @@ services:
   docker:
     image: docker:dind
     privileged: true
-    volumes:
-      - ./fable:/fable:ro
 
   db:
     image: postgres:10.1-alpine
@@ -14,6 +12,7 @@ services:
     build: .
     volumes:
       - ./codingworkshops:/codingworkshops/codingworkshops
+      - ./fable:/fable:ro
     ports:
       - 8000:8000
     environment:

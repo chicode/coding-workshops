@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'graphene_django',
 
     # apps
+    'codingworkshops.cream.apps.CreamConfig',
     'codingworkshops.workshops',
     'codingworkshops.users',
 ]
