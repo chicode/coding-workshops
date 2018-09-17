@@ -1,0 +1,6 @@
+- model: users.user
+  pk: 3
+  fields:
+    username: 'user1'
+    password: 'password'
+    email: 'abc@gmail.com'

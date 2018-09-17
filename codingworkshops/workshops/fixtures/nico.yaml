@@ -1,0 +1,46 @@
+- model: workshops.workshop
+  pk: 1
+  fields:
+    name: Make the Games of Your Dreams
+    description: Have you ever wanted to make Mario? Super Smash Bros? Let's learn how!
+    author: 3
+
+- model: workshops.lesson
+  pk: 1
+  fields:
+    name: The beginning
+    description: We will start out by embarking into an overview of our game engine and its language
+    workshop: 1
+
+- model: workshops.slide
+  pk: 1
+  fields:
+    name: Hello, world!
+    description: The programming world has a tradition of starting every program with a greeting, but instead of just writing text, let's get a player to say it instead! On the right you'll find the tool that we'll use to do so.
+    lesson: 1
+
+- model: workshops.direction
+  pk: 1
+  fields:
+    description: Mess around nico, and see if you can get the hang of it.
+    slide: 1
+
+
+- model: workshops.slide
+  pk: 2
+  fields:
+    name: Drawing our first sprite
+    description: In the game world, every different graphical item is called a sprite. When you combine lots of sprites together, you can get an animation.
+    lesson: 1
+
+- model: workshops.direction
+  pk: 2
+  fields:
+    description: Head on over to the sprites tab and draw a sprite in the first square.
+    slide: 2
+
+- model: workshops.direction
+  pk: 3
+  fields:
+    slide: 2
+    description: Put `sprite(0, 0, 0)` inside of the curly brackets of the `draw` function. This will tell nico that you want to draw a sprite.
