@@ -29,7 +29,10 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ['DEBUG']
 
 ALLOWED_HOSTS = [
-    'ec2-18-216-16-19.us-east-2.compute.amazonaws.com', '127.0.0.1'
+    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1'
+]
+CORS_ORIGIN_WHITELIST = [
+    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1'
 ]
 
 # Application definition
@@ -61,8 +64,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-CORS_ORIGIN_WHITELIST = ('localhost:8080', )
 
 # Fix session cookie not being allowed through CORS
 CORS_ALLOW_CREDENTIALS = True
