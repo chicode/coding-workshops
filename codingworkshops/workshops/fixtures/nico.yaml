@@ -78,8 +78,9 @@
   fields:
     name: game
     lesson: 2
-    description: a slide with a similar game, but it marks a point, gives you its coordinates, then gives you 
-some potential points and a new coordinate and has you guess where the new point is.
+    description: > 
+                   a slide with a similar game, but it marks a point, gives you its coordinates, then gives you 
+                   some potential points and a new coordinate and has you guess where the new point is.
 
 - model: workshops.slide
   pk: 1
