@@ -1,3 +1,3 @@
 #! /bin/bash
 
-bash ./run-django-script.sh migrate
+docker-compose run web pipenv run /codingworkshops/manage.py "$@"
