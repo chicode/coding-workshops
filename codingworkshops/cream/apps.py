@@ -1,11 +1,14 @@
 from django.apps import AppConfig
-import docker, json
+import docker, json, os
 
 
 class CreamConfig(AppConfig):
     name = 'codingworkshops.cream'
 
     def ready(self):
+        if not os.environ['BUILD_IMAGES']:
+            return
+
         client = docker.DockerClient(base_url='tcp://docker:2375')
         api_client = docker.APIClient(base_url='tcp://docker:2375')
 

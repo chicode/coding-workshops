@@ -18,6 +18,7 @@ services:
     environment:
       - DEBUG=${DEBUG}
       - SECRET_KEY=${SECRET_KEY}
+      - BUILD_IMAGES=${BUILD_IMAGES}
     depends_on:
       - db
       - docker
