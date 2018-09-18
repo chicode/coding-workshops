@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
     'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1'
 ]
 CORS_ORIGIN_WHITELIST = [
-    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1'
+    'codingworkshops.org', 'codingworkshops.netlify.com', 'localhost:8080'
 ]
 
 # Application definition
