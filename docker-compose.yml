@@ -4,6 +4,8 @@ services:
   docker:
     image: docker:dind
     privileged: true
+    volumes:
+      - ./fable:/fable:ro
 
   db:
     image: postgres:10.1-alpine
