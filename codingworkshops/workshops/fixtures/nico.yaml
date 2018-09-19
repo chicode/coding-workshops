@@ -16,7 +16,7 @@
   pk: 1
   fields:
     name: Sprite
-    description: >
+    description: |
                     *Sprites* are just pictures of things in your game--pictures of characters, trees, or whatever.
                     TODO: how to make sprites once the sprite thing is implemented
     lesson: 1
@@ -38,7 +38,7 @@
   pk: 2
   fields:
     name: Introduction
-    description: >
+    description: |
                     In the last lesson, you drew a sprite.
                     In this lesson, we'll show how to put it on screen and get it moving!
                     By pressing run code at the top, you'll be able to see a sprite running across screen.
@@ -49,7 +49,7 @@
   pk: 3
   fields:
     name: Talking to Nico
-    description: >
+    description: |
                     In order to do anything with Nico, we need to give it instructions on what we want it to do.
                     These instructions are called **code.** We'll talk more about code on the next slide, but for now let's wonder about *what* information we should tell Nico.
 
@@ -65,7 +65,7 @@
 - model: workshops.direction
   pk: 2
   fields:
-    description: >
+    description: |
                     Try getting the hang of this coordinate system by playing the little game at the right.
                     At the bottom left of the screen, it will show you the coordinates of your cursor at the moment.
                     At the bottom right, you'll see a goal point. Move your cursor to the goal point to increase your score.
@@ -77,7 +77,7 @@
   fields:
     name: game
     lesson: 2
-    description: >
+    description: |
                    a slide with a similar game, but it marks a point, gives you its coordinates, then gives you
                    some potential points and a new coordinate and has you guess where the new point is.
 
@@ -86,10 +86,10 @@
   fields:
     name: Putting Your Sprite Onscreen
     lesson: 2
-    starting_code: >
+    starting_code: |
                       let draw =
                         draw_sprite 0 17 34
-    description: >
+    description: |
                     Before we can let the player move the sprite, we need to put it on screen!
                     We need to tell Nico what to draw to the screen.
                     To do this, we will use **code** to tell Nico what to do.
@@ -106,7 +106,7 @@
 - model: workshops.direction
   pk: 4
   fields:
-    description: >
+    description: |
                     Draw another one of your sprites somewhere else on the screen!
                     In the editor view, add a new line of code giving Nico the `draw_sprite` instruction.
                     Remember to indent it properly and to include all three arguments!
@@ -117,7 +117,7 @@
   fields:
     lesson: 2
     name: Comments
-    description: >
+    description: |
                     Now, time to get sprites to move! But before that, some bookkeeping.
                     Notice that your code from before has disappeared and been reset by my code.
                     For the rest of this workshop, the code you write will persist from slide to slide--you'll slowly be building up a larger program!
@@ -128,7 +128,7 @@
   pk: 7
   fields:
     name: Moving Your Sprite
-    description: >
+    description: |
                     Let's start getting your sprite to move!
                     To do this, we need to constantly be changing the position of the sprite--first, we need to tell Nico to draw the sprite at (0, 0), and then we need to tell Nico to draw it a little bit to the right--say (5, 0)--and then a little bit more to the right--say (10, 0)--etc.,
                     So, let's try doing this as a first approach: Nico follows instructions in order. So, we'll first tell it to draw the sprite at (0, 0), then at (5, 0), and then at (10, 0).
@@ -137,7 +137,7 @@
 - model: workshops.direction
   pk: 5
   fields:
-    description: >
+    description: |
                     After Nico draws the sprite at (0, 0), tell it to draw the sprite at (5, 0) and then at (10, 0).
                     Do you notice anything strange?
     slide: 7
@@ -146,7 +146,7 @@
   pk: 8
   fields:
     name: Moving Your Sprite... Didn't Work
-    description: >
+    description: |
                   Huh. That didn't work--Nico just drew three overlapping sprites that are all stuck there!
                   Let's understand what happens. Firstly, we never tell Nico to erase the screen--so, the old sprites stay.
                   Now, why is it that the sprites don't show up one after another?
@@ -161,7 +161,7 @@
 - model: workshops.direction
   pk: 6
   fields:
-    description: >
+    description: |
                     Explain to something (an imaginary friend, your computer, your stuffed animal, your pencil, ...) how Nico works.
     slide: 8
 
@@ -169,7 +169,7 @@
   pk: 9
   fields:
     name: Variables
-    description: >
+    description: |
                     In order to move the sprite, we need to keep track of its position. We'll keep track of the position using a *variable.*
                     A *variable* is just an empty box that can hold a value.
                     To make one, at the very start of your program (before `let draw = `), add the line of code
@@ -193,7 +193,7 @@
   pk: 10
   fields:
     name: Using Variables
-    description: >
+    description: |
                     Now that you have two variables ready, let's start using them!
                     Instead of telling Nico to draw a sprite at (0, 0), tell it to draw a sprite at (x_coordinate, y_coordinate).
 
@@ -210,7 +210,7 @@
   pk: 11
   fields:
     name: Update and Changing Variables
-    description: >
+    description: |
                     Sixty times every second, a video game does two things: Updates and then draws.
                     **Update** means the video game is doing something to change itself--for example, changing the position of something on screen, lowering the health of the player, or figuring out if the player wants to move anywhere.
                     Then, it **draws** the screen to reflect those changes.
@@ -243,7 +243,7 @@
 - model: workshops.direction
   pk: 10
   fields:
-    description: >
+    description: |
                     When you run the code, you'll notice that the sprite moves right, but leaves a trail behind it. Uh oh! This is because we're never erasing the screen--so all the old drawings pile up on top of each other!
                     To clear the screen, add the instruction `clear_screen` to the start of your draw section. Remember to indent it!
 
@@ -279,7 +279,7 @@
   pk: 15
   fields:
     lesson: 3
-    description: >
+    description: |
                   Let's approach the problem of responding to keyboard input from a high level.
                   First, we'll need a way to determine whether or not the player is holding down a key.
                   Then, we'll need to tell Nico to move the player *if* they're holding a key, but to not do anything otherwise.
@@ -292,7 +292,7 @@
   pk: 16
   fields:
     lesson: 3
-    description: >
+    description: |
                   To get user input, we first need to talk about **booleans.** A **boolean** is just a fancy word for something that can be true or false.
 
                   When we ask Nico a question, like "is the player holding down the left arrow key?", Nico responds with either `true` or `false`. True just means "yes", and false just means "no."
@@ -317,7 +317,7 @@
 - model: workshops.slide
   pk: 17
   fields:
-    description: >
+    description: |
                   Now, we'll use `if` statements. An `if` statement is just a way of telling Nico "only do these instructions IF something is true."
                   Currently, your update section looks something like
                   `let update =
