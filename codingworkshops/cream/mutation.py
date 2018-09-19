@@ -24,12 +24,15 @@ def create_archive(name, file_data):
 
 def prepare_code(code):
     return '''
-    module FableDemo
+module FableDemo
 
-    open Fable.Core
+open Fable.Core
+open Fable.Core.JsInterop
+open Fable.Import.Browser
 
-    let sprite i x y = jsNative
-    ''' + code
+[<Emit("window.sprite($0, $1, $2)")>]
+let sprite i x y = jsNative
+''' + code
 
 
 class Language(graphene.Enum):
