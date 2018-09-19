@@ -10,7 +10,7 @@ import codingworkshops.cream.mutation
 
 class Query(
     codingworkshops.workshops.query.Query, codingworkshops.users.query.Query,
-    graphene.ObjectType
+    codingworkshops.cream.mutation.Query, graphene.ObjectType
 ):
     # This class will inherit from multiple Queries
     # as we begin to add more apps to our project

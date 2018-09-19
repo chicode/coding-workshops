@@ -1,4 +1,4 @@
-import tarfile, gzip, json, time, io, re
+import tarfile, gzip, json, time, io, re, time, collections
 
 import docker
 import graphene
@@ -50,6 +50,22 @@ class Error(graphene.ObjectType):
     message = graphene.String(required=True)
 
 
+MAX_TIMES = 20
+
+total_times = {1: collections.deque([9], maxlen=MAX_TIMES)}
+
+
+class Query(graphene.ObjectType):
+    compilation_time = graphene.Field(
+        graphene.Float, language=Language(required=True)
+    )
+
+    def resolve_compilation_time(self, info, language):
+        if total_times[language]:
+            return sum(total_times[language]) / len(total_times[language])
+        return 0
+
+
 class CompileCode(graphene.Mutation):
     class Arguments:
         language = Language(required=True)
@@ -61,6 +77,7 @@ class CompileCode(graphene.Mutation):
     warnings = graphene.List(Error)
 
     def mutate(self, info, language, code):
+        start = time.time()
         if (language == 1):
             client = docker.DockerClient(base_url='tcp://docker:2375')
             container = client.containers.create(
@@ -114,6 +131,8 @@ class CompileCode(graphene.Mutation):
                 [format(message) for message in logs[log_type]]
                 for log_type in logs
             }
+
+            total_times[language].append(time.time() - start)
 
             if 'errors' in formatted_logs:
                 return CompileCode(success=False, **formatted_logs)

@@ -28,5 +28,3 @@ class Query(graphene.ObjectType):
         if info.context.user.is_authenticated:
             return info.context.user
         return None
-
-
