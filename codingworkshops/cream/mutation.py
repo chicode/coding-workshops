@@ -39,6 +39,17 @@ class Language(graphene.Enum):
     FSHARP = 1
 
 
+class Location(graphene.ObjectType):
+    line = graphene.Int(required=True)
+    ch = graphene.Int(required=True)
+
+
+class Error(graphene.ObjectType):
+    from_ = graphene.Field(Location, required=True)
+    to = graphene.Field(Location, required=True)
+    message = graphene.String(required=True)
+
+
 class CompileCode(graphene.Mutation):
     class Arguments:
         language = Language(required=True)
@@ -46,8 +57,8 @@ class CompileCode(graphene.Mutation):
 
     success = graphene.Boolean(required=True)
     code = graphene.String()
-    error = graphene.List(graphene.NonNull(graphene.String))
-    warning = graphene.List(graphene.NonNull(graphene.String))
+    errors = graphene.List(Error)
+    warnings = graphene.List(Error)
 
     def mutate(self, info, language, code):
         if (language == 1):
@@ -80,12 +91,38 @@ class CompileCode(graphene.Mutation):
                 elif code_data:
                     code.append(log)
 
-            if 'error' in logs:
-                return CompileCode(success=False, **logs)
+            # lines until user code
+            CODE_OFFSET = 10
+
+            def format(message):
+                line, ch = map(
+                    int,
+                    re.search(r'(?<=: \()\d*,\d*(?=\))',
+                              message).group(0).split(',')
+                )
+                text = re.search(
+                    r'(?<=error FSHARP: ).*', message, flags=re.S
+                ).group(0)
+                return Error(
+                    from_=Location(line=line - CODE_OFFSET, ch=ch - 1),
+                    to=Location(line=line - CODE_OFFSET, ch=ch),
+                    message=text
+                )
+
+            formatted_logs = {
+                log_type + 's':
+                [format(message) for message in logs[log_type]]
+                for log_type in logs
+            }
+
+            if 'errors' in formatted_logs:
+                return CompileCode(success=False, **formatted_logs)
 
             code[-1] = re.search('.*?(?=Done in)', code[-1]).group(0)
 
-            return CompileCode(success=True, code=''.join(code), *logs)
+            return CompileCode(
+                success=True, code=''.join(code), **formatted_logs
+            )
 
 
 class Mutation(graphene.ObjectType):
