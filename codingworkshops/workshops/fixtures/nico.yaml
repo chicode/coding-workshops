@@ -4,23 +4,23 @@
     name: Making Games in Nico
     description: Have you ever wanted to make Mario? Zelda? Let's learn how!
     author: 3
- 
+
 - model: workshops.lesson
   pk: 1
   fields:
     name: What's Nico?
     description: We'll take a look at what Nico is, and how to use it.
     workshop: 1
- 
+
 - model: workshops.slide
   pk: 1
   fields:
     name: Sprite
     description: >
                     *Sprites* are just pictures of things in your game--pictures of characters, trees, or whatever.
-                    TODO: how to make sprites once the sprite thing is implemented 
+                    TODO: how to make sprites once the sprite thing is implemented
     lesson: 1
- 
+
 - model: workshops.direction
   pk: 1
   fields:
@@ -28,72 +28,71 @@
     slide: 1
 
 - model: workshops.lesson
-  pk: 1
-  fields: 
+  pk: 2
+  fields:
     name: Putting a Sprite on Screen
-    description: Now that you've drawn a sprite, let's see how to use it! 
+    description: Now that you've drawn a sprite, let's see how to use it!
     workshop: 1
 
 - model: workshops.slide
-  pk: 1
+  pk: 2
   fields:
     name: Introduction
-    description: > 
-                    In the last lesson, you drew a sprite. 
+    description: >
+                    In the last lesson, you drew a sprite.
                     In this lesson, we'll show how to put it on screen and get it moving!
                     By pressing run code at the top, you'll be able to see a sprite running across screen.
                     TODO: make sure anton's think can handle this
     lesson: 2
 
 - model: workshops.slide
-  pk: 1
+  pk: 3
   fields:
     name: Talking to Nico
     description: >
                     In order to do anything with Nico, we need to give it instructions on what we want it to do.
                     These instructions are called **code.** We'll talk more about code on the next slide, but for now let's wonder about *what* information we should tell Nico.
-                    
+
                     We need to tell Nico to draw a sprite onto the screen. So, it needs to know two pieces of information: Which sprite should it draw, and where on screen should we draw it?
                     To tell it *which* sprite to draw, we'll be using the sprite numbers from before--remember the big number next to your sprite? If you forgot your sprite's number, click on the sprite tab so that you can see it again.
-                    To tell it *where* to draw the sprite, we'll use coordinates. 
+                    To tell it *where* to draw the sprite, we'll use coordinates.
                     In your school math classes, you've probably seen coordinate systems before--points have an x-coordinate and a y-coordinate that describe how to move to get the point.
                     However, the coordinates that Nico uses are a little different from what you use in math class--firstly, the origin (the point (0, 0)) is at the **top-left** corner, *not* the top-right corner. Secondly, making the y-coordinate bigger makes you move **down,** *not* up.
                     This may seem a little tricky right now, but after awhile you'll be able to get the hang of it.
-                    TODO: interactive coordinate activity? i could do it with nico + game view once we get that working... 
+                    TODO: interactive coordinate activity? i could do it with nico + game view once we get that working...
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 2
   fields:
     description: >
                     Try getting the hang of this coordinate system by playing the little game at the right.
-                    At the bottom left of the screen, it will show you the coordinates of your cursor at the moment. 
+                    At the bottom left of the screen, it will show you the coordinates of your cursor at the moment.
                     At the bottom right, you'll see a goal point. Move your cursor to the goal point to increase your score.
                     Once you feel you've gotten the hang of this, head over to the next slide!
     slide: 3
-    lesson: 2
 
 - model: workshops.slide
-  pk: 1
+  pk: 4
   fields:
     name: game
     lesson: 2
-    description: > 
-                   a slide with a similar game, but it marks a point, gives you its coordinates, then gives you 
+    description: >
+                   a slide with a similar game, but it marks a point, gives you its coordinates, then gives you
                    some potential points and a new coordinate and has you guess where the new point is.
 
 - model: workshops.slide
-  pk: 1
+  pk: 5
   fields:
     name: Putting Your Sprite Onscreen
-    lesson: 2   
+    lesson: 2
     starting_code: >
-                      let draw = 
-                        draw_sprite 0 17 34 
-    description: > 
+                      let draw =
+                        draw_sprite 0 17 34
+    description: >
                     Before we can let the player move the sprite, we need to put it on screen!
-                    We need to tell Nico what to draw to the screen. 
-                    To do this, we will use **code** to tell Nico what to do. 
+                    We need to tell Nico what to draw to the screen.
+                    To do this, we will use **code** to tell Nico what to do.
                     Switch to the editor view to view code. You'll see some code in there already; let's talk about what it does.
 
                     The first line, `let draw = ` just tells Nico that we're going to be telling it what to draw. We'll talk more about the exact meaning of this later; for now, it's only important to understand that this means "draw."
@@ -102,57 +101,53 @@
                     Now, the second line itself. The first word, `draw_sprite` tells Nico what we want it to do: draw our sprite! (Notice the underscore, not the space!)
                     There's three numbers after it--remember how we need to give Nico information about our sprite? We need to tell Nico *which* sprite to draw, and *where* to draw it.
                     The first number, 0, corresponds to which sprite we're drawing. The next two numbers, `17 34` correspond to the position--the first number, `17,` is the x-coordinate, and the second number, `34,` is the y-coordinate.
-      
-        
+
+
 - model: workshops.direction
-  pk: 1
-  fields: 
+  pk: 4
+  fields:
     description: >
-                    Draw another one of your sprites somewhere else on the screen! 
-                    In the editor view, add a new line of code giving Nico the `draw_sprite` instruction. 
+                    Draw another one of your sprites somewhere else on the screen!
+                    In the editor view, add a new line of code giving Nico the `draw_sprite` instruction.
                     Remember to indent it properly and to include all three arguments!
     slide: 5
 
 - model: workshops.slide
-  pk: 1
+  pk: 6
   fields:
     lesson: 2
     name: Comments
-    starting_code: >
-                      // this is a comment. Nico will ignore me.
-                      let draw = 
-                        draw_sprite 0 0 0
     description: >
-                    Now, time to get sprites to move! But before that, some bookkeeping. 
-                    Notice that your code from before has disappeared and been reset by my code. 
+                    Now, time to get sprites to move! But before that, some bookkeeping.
+                    Notice that your code from before has disappeared and been reset by my code.
                     For the rest of this workshop, the code you write will persist from slide to slide--you'll slowly be building up a larger program!
-                    One way to help yourself read code from before is with **comments.** 
+                    One way to help yourself read code from before is with **comments.**
                     Comments are little notes you can leave to yourself (or for other programmers if you're working with more people) to help understand the code. One piece of advice: If there's something you had to spend a long time thinking about, make a comment about it. After having spent a very long time thinking about it, it may seem obvious now--but it wasn't a few minutes ago, and it might not be in a few days!
 
 - model: workshops.slide
-  pk: 1
+  pk: 7
   fields:
     name: Moving Your Sprite
     description: >
-                    Let's start getting your sprite to move! 
+                    Let's start getting your sprite to move!
                     To do this, we need to constantly be changing the position of the sprite--first, we need to tell Nico to draw the sprite at (0, 0), and then we need to tell Nico to draw it a little bit to the right--say (5, 0)--and then a little bit more to the right--say (10, 0)--etc.,
                     So, let's try doing this as a first approach: Nico follows instructions in order. So, we'll first tell it to draw the sprite at (0, 0), then at (5, 0), and then at (10, 0).
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 5
   fields:
     description: >
-                    After Nico draws the sprite at (0, 0), tell it to draw the sprite at (5, 0) and then at (10, 0). 
-                    Do you notice anything strange? 
+                    After Nico draws the sprite at (0, 0), tell it to draw the sprite at (5, 0) and then at (10, 0).
+                    Do you notice anything strange?
     slide: 7
-    
+
 - model: workshops.slide
-  pk: 1
+  pk: 8
   fields:
     name: Moving Your Sprite... Didn't Work
     description: >
-                  Huh. That didn't work--Nico just drew three overlapping sprites that are all stuck there! 
+                  Huh. That didn't work--Nico just drew three overlapping sprites that are all stuck there!
                   Let's understand what happens. Firstly, we never tell Nico to erase the screen--so, the old sprites stay.
                   Now, why is it that the sprites don't show up one after another?
 
@@ -164,24 +159,24 @@
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 6
   fields:
     description: >
                     Explain to something (an imaginary friend, your computer, your stuffed animal, your pencil, ...) how Nico works.
     slide: 8
 
 - model: workshops.slide
-  pk: 1
+  pk: 9
   fields:
     name: Variables
     description: >
                     In order to move the sprite, we need to keep track of its position. We'll keep track of the position using a *variable.*
-                    A *variable* is just an empty box that can hold a value. 
+                    A *variable* is just an empty box that can hold a value.
                     To make one, at the very start of your program (before `let draw = `), add the line of code
                       `let mutable x_coordinate = 0`
-                    
+
                     Now, let's talk about what this line of code does. The first two words, `let mutable` just lets Nico know we're going to be creating a variable. (The word `mutable` just means changeable--since we can change what's inside of the box, as we'll want to be changing where the position of our sprite is.)
-                    The next word, `x_coordinate` just tells Nico what the name of the box is. This is what we'll use to refer to the box from now on. We use an underscore `_` instead of a space between `x` and `coordiante` since Nico doesn't like us to put spaces in variable names. 
+                    The next word, `x_coordinate` just tells Nico what the name of the box is. This is what we'll use to refer to the box from now on. We use an underscore `_` instead of a space between `x` and `coordiante` since Nico doesn't like us to put spaces in variable names.
                     The last part, `= 0` just tells Nico to start by putting 0 in the box.
 
                     Why don't we put this inside of the `let draw` part of the program? Well, that's because the draw portion of the program is run 60 times every second. So, we'd be creating an awful lot of boxes!
@@ -189,13 +184,13 @@
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 7
   fields:
-    description: Create a second variable that stores the y coordinate of the object. 
+    description: Create a second variable that stores the y coordinate of the object.
     slide: 9
 
 - model: workshops.slide
-  pk: 1
+  pk: 10
   fields:
     name: Using Variables
     description: >
@@ -206,27 +201,27 @@
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 8
   fields:
-    description: Have Nico draw a sprite at (x_coordinate, y_coordinate). 
+    description: Have Nico draw a sprite at (x_coordinate, y_coordinate).
     slide: 10
 
 - model: workshops.slide
-  pk: 1
+  pk: 11
   fields:
     name: Update and Changing Variables
     description: >
-                    Sixty times every second, a video game does two things: Updates and then draws. 
+                    Sixty times every second, a video game does two things: Updates and then draws.
                     **Update** means the video game is doing something to change itself--for example, changing the position of something on screen, lowering the health of the player, or figuring out if the player wants to move anywhere.
                     Then, it **draws** the screen to reflect those changes.
 
-                    We're already telling Nico what to do during the draw part of it's life. But what about the update part? 
+                    We're already telling Nico what to do during the draw part of it's life. But what about the update part?
                     Well, before we talk about how to give Nico update instructions, let's figure out what instructions we should give it. We want the sprite to move, so we should give it some instructions to change the position of the sprite.
-                    This is where our variables `x_coordinate` and `y_coordinate` from before come in. Remember that variables are just boxes that hold something. If we change what's in the box, that changes what happens when we use the variables. 
+                    This is where our variables `x_coordinate` and `y_coordinate` from before come in. Remember that variables are just boxes that hold something. If we change what's in the box, that changes what happens when we use the variables.
                     At the present moment, we're telling Nico to draw a sprite at whatever coordinates are inside the `x_coordinate` and `y_coorindate` boxes. So, during update let's change what's inside of those boxes by a little bit to get the sprite to move!
 
                     Now, let's define the update part of our program. After the draw section, type
-                    `let update = 
+                    `let update =
                       x_coordinate <- x_coordinate + 3`
                     One thing to note: `let update = ` should not be indented, since it is the start of a new section. But `x_coordinate <- x_coordinate + 3` should be indented, since it is part of the `update` section.
 
@@ -240,13 +235,13 @@
     lesson: 2
 
 - model: workshops.direction
-  pk: 1
+  pk: 9
   fields:
     description: Run the code and see what happens!
     slide: 11
 
 - model: workshops.direction
-  pk: 1
+  pk: 10
   fields:
     description: >
                     When you run the code, you'll notice that the sprite moves right, but leaves a trail behind it. Uh oh! This is because we're never erasing the screen--so all the old drawings pile up on top of each other!
@@ -256,32 +251,32 @@
     slide: 11
 
 - model: workshops.direction
-  pk: 1
+  pk: 11
   fields:
     description: Add code to the `update` section of the game that changes the `y_coordinate` like we changed the `x_coordinate` and see how your sprite moves now!
     slide: 11
 
 - model: workshops.slide
-  pk: 1
+  pk: 12
   fields:
     description: Congratulations, you've finished this lesson! Feel free to go back to re-read some parts and move on to the second lesson when you're ready.
     lesson: 2
 
 - model: workshops.lesson
-  pk: 1
+  pk: 3
   fields:
     name: Player Input
     description: Let's see how to let the player control the movement of our sprite!
     workshop: 1
 
 - model: workshops.slide
-  pk: 1
+  pk: 14
   fields:
     description: In this lesson, we'll learn how to make our sprites respond to keyboard input. You can play the game on the right using WASD to move!
     lesson: 3
 
 - model: workshops.slide
-  pk: 1
+  pk: 15
   fields:
     lesson: 3
     description: >
@@ -289,19 +284,19 @@
                   First, we'll need a way to determine whether or not the player is holding down a key.
                   Then, we'll need to tell Nico to move the player *if* they're holding a key, but to not do anything otherwise.
 
-                  So, we need two tools: A way to determine keyboard input, and a way to tell Nico to only do something if a key is being held down. 
+                  So, we need two tools: A way to determine keyboard input, and a way to tell Nico to only do something if a key is being held down.
 
                   Let's investigate these two issues separately, and then combine them to solve our movement problem!
 
 - model: workshops.slide
-  pk: 1
+  pk: 16
   fields:
     lesson: 3
     description: >
                   To get user input, we first need to talk about **booleans.** A **boolean** is just a fancy word for something that can be true or false.
-                  
+
                   When we ask Nico a question, like "is the player holding down the left arrow key?", Nico responds with either `true` or `false`. True just means "yes", and false just means "no."
-                  To ask Nico a question like that, we use the instruction 
+                  To ask Nico a question like that, we use the instruction
                     `is_key_down "LEFT"`
                   The word `"LEFT"` corresponds to the left arrow key. It's in those quotation marks to tell Nico that LEFT is a **string.** A string is just a piece of text.
                   If we didn't put LEFT in quotes, Nico would think that LEFT was a variable, and try to find the value inside the LEFT box. But since we don't have any variables named LEFT, Nico would get confused and not know what to do here. So, we have to use the quotation marks so Nico knows not to go looking for a variable that doesn't exist (or even worse, finding an unrelated variable named LEFT and making our program do something we didn't expect!).
@@ -314,18 +309,18 @@
                   Don't actually add this code to your program yet; next slide, we'll learn how to use these questions.
 
 - model: workshops.direction
-  pk: 1
-  fields: 
+  pk: 12
+  fields:
     description: What instruction would you give Nico to determine if the up arrow key is being pressed? If the down arrow key is being pressed? If the key E is being pressed?
-    slide: 15
+    slide: 16
 
 - model: workshops.slide
-  pk: 1
+  pk: 17
   fields:
     description: >
                   Now, we'll use `if` statements. An `if` statement is just a way of telling Nico "only do these instructions IF something is true."
                   Currently, your update section looks something like
-                  `let update = 
+                  `let update =
                     x_coordinate <- x_coordinate + 3
                     y_coordinate <- y_coordinate + 3`
                   Let's replace this with
@@ -339,7 +334,7 @@
     lesson: 3
 
 - model: workshops.direction
-  pk: 1
+  pk: 13
   fields:
-    slide: 16
-    description: Allow the player to move left and up as well. 
+    slide: 17
+    description: Allow the player to move left and up as well.
