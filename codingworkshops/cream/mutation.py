@@ -27,8 +27,8 @@ def prepare_code(code):
     module FableDemo
 
     open Fable.Core
-    open Fable.Core.JsInterop
-    open Fable.Import
+
+    let sprite i x y = jsNative
     ''' + code
 
 
