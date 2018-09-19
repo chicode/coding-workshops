@@ -1,12 +1,12 @@
 {
   "private": true,
   "scripts": {
-    "compile": "cd src && dotnet fable npm-build && echo CODE && cat ../dist/*.js",
+    "compile": "rm -rf dist && cd src && dotnet fable npm-build && echo CODE && cat ../dist/*.js",
     "build": "parcel build --no-cache src/index.html",
     "postinstall": "dotnet restore"
   },
   "devDependencies": {
     "parcel-bundler": "^1.5.0",
-    "parcel-plugin-fable-cream": "^1.5.1"
+    "parcel-plugin-fable-cream": "^1.5.3"
   }
 }
