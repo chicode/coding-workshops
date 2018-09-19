@@ -29,10 +29,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ['DEBUG']
 
 ALLOWED_HOSTS = [
-    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1'
+    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1',
+    'localhost'
 ]
 CORS_ORIGIN_WHITELIST = [
-    'codingworkshops.org', 'codingworkshops.netlify.com', 'localhost:8080'
+    'codingworkshops.org', 'codingworkshops.netlify.com', '127.0.0.1:8080',
+    'localhost:8080'
 ]
 
 # Application definition
