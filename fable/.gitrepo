@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/outkine/minimal-fable-boilerplate
+	remote = https://github.com/chicode/minimal-fable-boilerplate
 	branch = master
 	commit = fb28764d4a212bd6735cace4b60235b811924ec3
 	parent = 341d43ded3a9fd9cde043c0ed84d6ca14bc8e506

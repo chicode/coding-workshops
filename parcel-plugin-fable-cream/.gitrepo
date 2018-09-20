@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/outkine/parcel-plugin-fable
+	remote = https://github.com/chicode/parcel-plugin-fable-cream
 	branch = master
 	commit = e3fe9cecb2209a7ae81ca04afdbddc91c4e44b3c
 	parent = 54bf4dff55596b976c0b53f9ee83753ac6eafb9b
