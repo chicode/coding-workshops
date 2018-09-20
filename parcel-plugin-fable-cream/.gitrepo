@@ -6,8 +6,8 @@
 [subrepo]
 	remote = https://github.com/outkine/parcel-plugin-fable
 	branch = master
-	commit = bc121c47c46c5e66b9b888d73e3e9847896f1dd3
-	parent = f674d2dd46f7c1ec828d583ea6d2ffcba552450a
+	commit = e3fe9cecb2209a7ae81ca04afdbddc91c4e44b3c
+	parent = 54bf4dff55596b976c0b53f9ee83753ac6eafb9b
 	method = merge
 	update = auto
 	cmdver = 0.4.1
