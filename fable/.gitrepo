@@ -6,8 +6,8 @@
 [subrepo]
 	remote = https://github.com/outkine/minimal-fable-boilerplate
 	branch = master
-	commit = fff925459a63b85ce12955a4b4ee840f4fc0b18c
-	parent = d0e3271f6bcd774037af587b2395ee0629b4f1a0
+	commit = fb28764d4a212bd6735cace4b60235b811924ec3
+	parent = 341d43ded3a9fd9cde043c0ed84d6ca14bc8e506
 	method = merge
 	update = auto
 	cmdver = 0.4.1
