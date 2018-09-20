@@ -118,7 +118,7 @@ class CompileCode(graphene.Mutation):
                               message).group(0).split(',')
                 )
                 text = re.search(
-                    r'(?<=error FSHARP: ).*', message, flags=re.S
+                    r'(?<=FSHARP: ).*', message, flags=re.S
                 ).group(0)
                 return Error(
                     from_=Location(line=line - CODE_OFFSET, ch=ch - 1),
