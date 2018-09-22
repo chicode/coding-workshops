@@ -22,8 +22,7 @@ def create_archive(name, file_data):
     return pw_tarstream
 
 
-def prepare_code(code):
-    return '''
+TEMPLATE = '''
 module FableDemo
 
 open Fable.Core
@@ -32,7 +31,15 @@ open Fable.Import.Browser
 
 [<Emit("window.sprite($0, $1, $2)")>]
 let sprite i x y = jsNative
-''' + code
+'''
+
+# lines until user code
+# TODO deduce the 2 automatically
+CODE_OFFSET = len(TEMPLATE.split('\n')) + 2
+
+
+def prepare_code(code):
+    return TEMPLATE + code
 
 
 class Language(graphene.Enum):
@@ -107,9 +114,6 @@ class CompileCode(graphene.Mutation):
                     code_data = True
                 elif code_data:
                     code.append(log)
-
-            # lines until user code
-            CODE_OFFSET = 10
 
             def format(message):
                 line, ch = map(
