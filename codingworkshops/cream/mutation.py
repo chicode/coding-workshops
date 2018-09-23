@@ -1,4 +1,4 @@
-import tarfile, gzip, json, time, io, re, time, collections
+import tarfile, gzip, json, time, io, re, collections
 
 import docker
 import graphene
@@ -73,18 +73,31 @@ class Query(graphene.ObjectType):
         return 0
 
 
+# seconds that must pass between each request
+THROTTLE = 10
+
+
 class CompileCode(graphene.Mutation):
     class Arguments:
         language = Language(required=True)
         code = graphene.String(required=True)
 
     success = graphene.Boolean(required=True)
+    blocked = graphene.Boolean()
     code = graphene.String()
     errors = graphene.List(Error)
     warnings = graphene.List(Error)
 
     def mutate(self, info, language, code):
+        last_run = float(info.context.session.get('LAST_RUN', 0))
         start = time.time()
+
+        if last_run and start - last_run <= THROTTLE:
+            return CompileCode(success=False, blocked=True)
+        info.context.session['LAST_RUN'] = start
+        # this is necessary for the session to save in the middle of the function
+        info.context.session.save()
+
         if (language == 1):
             client = docker.DockerClient(base_url='tcp://docker:2375')
             container = client.containers.create(
