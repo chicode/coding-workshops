@@ -17,22 +17,18 @@ class CreateWorkshop(ModelMutation, graphene.Mutation):
             author=info.context.user,
             **kwargs,
         )
-
         return validate(CreateWorkshop, workshop)
 
 
 class EditWorkshop(ModelMutation, graphene.Mutation):
     class Arguments:
-        pk_name = graphene.String(required=True)
+        pk = graphene.ID(required=True)
 
-        name = graphene.String()
         description = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
-        workshop = Workshop.objects.get(
-            name=kwargs.pop('pk_name'), author=info.context.user
-        )
+        workshop = Workshop.objects.get(pk=kwargs.pop('pk'))
         if info.context.user != workshop.author:
             permission_denied()
         update(workshop, kwargs)
@@ -44,7 +40,7 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
 
 class CreateLesson(ModelMutation, graphene.Mutation):
     class Arguments:
-        workshop = graphene.String(required=True)
+        workshop = graphene.ID(required=True)
 
         index = graphene.Int(required=True)
         name = graphene.String(required=True)
@@ -52,26 +48,24 @@ class CreateLesson(ModelMutation, graphene.Mutation):
     @authenticated
     def mutate(self, info, **kwargs):
         lesson = Lesson(
-            workshop=Workshop.objects.get(
-                name=kwargs.pop('workshop'), author=info.context.author
-            ),
+            workshop=Workshop.objects.get(pk=kwargs.pop('workshop')),
             **kwargs,
         )
-
+        if info.context.user != lesson.workshop.author:
+            permission_denied()
         return validate(CreateLesson, lesson)
 
 
 class EditLesson(ModelMutation, graphene.Mutation):
     class Arguments:
-        pk_id = graphene.ID(required=True)
+        pk = graphene.ID(required=True)
 
-        index = graphene.Int()
         name = graphene.String()
         description = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
-        lesson = Lesson.objects.get(id=kwargs.pop('pk_id'))
+        lesson = Lesson.objects.get(pk=kwargs.pop('pk'))
         if info.context.user != lesson.workshop.author:
             permission_denied()
         update(lesson, kwargs)
@@ -91,24 +85,25 @@ class CreateSlide(ModelMutation, graphene.Mutation):
     @authenticated
     def mutate(self, info, **kwargs):
         slide = Slide(
-            lesson=Lesson.objects.get(id=kwargs.pop('lesson')),
+            lesson=Lesson.objects.get(pk=kwargs.pop('lesson')),
             **kwargs,
         )
+        if info.context.user != slide.lesson.workshop.author:
+            permission_denied()
         return validate(CreateSlide, slide)
 
 
 class EditSlide(ModelMutation, graphene.Mutation):
     class Arguments:
-        pk_id = graphene.ID(required=True)
+        pk = graphene.ID(required=True)
 
-        index = graphene.Int()
         name = graphene.String()
         description = graphene.String()
         starting_code = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
-        slide = Slide.objects.get(id=kwargs.pop('pk_id'))
+        slide = Slide.objects.get(pk=kwargs.pop('pk'))
         if info.context.user != slide.lesson.workshop.author:
             permission_denied()
         update(slide, kwargs)
@@ -128,15 +123,17 @@ class CreateDirection(ModelMutation, graphene.Mutation):
     @authenticated
     def mutate(self, info, **kwargs):
         direction = Direction(
-            slide=Slide.objects.get(id=kwargs.pop('slide')),
+            slide=Slide.objects.get(pk=kwargs.pop('slide')),
             **kwargs,
         )
+        if info.context.user != direction.slide.lesson.workshop.author:
+            permission_denied()
         return validate(CreateDirection, direction)
 
 
 class EditDirection(ModelMutation, graphene.Mutation):
     class Arguments:
-        pk_id = graphene.ID(required=True)
+        pk = graphene.ID(required=True)
 
         index = graphene.Int()
         description = graphene.String()
@@ -144,8 +141,8 @@ class EditDirection(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        direction = Direction.objects.get(id=kwargs.pop('pk_id'))
-        if info.context.user != direction.lesson.workshop.author:
+        direction = Direction.objects.get(pk=kwargs.pop('pk'))
+        if info.context.user != direction.slide.lesson.workshop.author:
             permission_denied()
         update(direction, kwargs)
         return validate(EditDirection, direction)
