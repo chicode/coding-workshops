@@ -1,9 +1,20 @@
 import graphene
 import graphene_django.types
 
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Workshop, Lesson, Slide, Direction
+from codingworkshops.users.models import User
+
+
+def protect(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ObjectDoesNotExist:
+            return None
+
+    return wrapper
 
 
 class WorkshopType(graphene_django.types.DjangoObjectType):
@@ -29,38 +40,48 @@ class DirectionType(graphene_django.types.DjangoObjectType):
 class Query(graphene.ObjectType):
     all_workshops = graphene.List(WorkshopType)
     workshop = graphene.Field(
-        WorkshopType, workshop=graphene.String(required=True)
+        WorkshopType,
+        human=graphene.String(required=True),
+        workshop=graphene.String(required=True)
     )
 
     def resolve_all_workshops(self, info):
         return Workshop.objects.all()
 
-    def resolve_workshop(self, info, workshop):
-        return Workshop.objects.get(name=workshop)
+    @protect
+    def resolve_workshop(self, info, human, workshop):
+        return Workshop.objects.get(
+            author=User.objects.get(username=human), name=workshop
+        )
 
     lesson = graphene.Field(
         LessonType,
+        human=graphene.String(required=True),
         workshop=graphene.String(required=True),
         lesson=graphene.ID(required=True),
     )
 
-    def resolve_lesson(self, info, workshop, lesson):
-        try:
-            return Lesson.objects.get(workshop__name=workshop, id=lesson)
-        except ObjectDoesNotExist:
-            return None
+    @protect
+    def resolve_lesson(self, info, human, workshop, lesson):
+        return Lesson.objects.get(
+            workshop__author=User.objects.get(username=human),
+            workshop__name=workshop,
+            id=lesson
+        )
 
     slide = graphene.Field(
         SlideType,
+        human=graphene.String(required=True),
         workshop=graphene.String(required=True),
         lesson=graphene.ID(required=True),
         slide=graphene.ID(required=True)
     )
 
-    def resolve_slide(self, info, workshop, lesson, slide):
-        try:
-            return Slide.objects.get(
-                lesson__workshop__name=workshop, lesson__id=lesson, id=slide
-            )
-        except ObjectDoesNotExist:
-            return None
+    @protect
+    def resolve_slide(self, info, human, workshop, lesson, slide):
+        return Slide.objects.get(
+            lesson__workshop__author=User.objects.get(username=human),
+            lesson__workshop__name=workshop,
+            lesson__id=lesson,
+            id=slide
+        )

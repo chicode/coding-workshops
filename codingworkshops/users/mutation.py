@@ -1,11 +1,10 @@
 import graphene
-from graphene_django.forms.mutation import DjangoModelFormMutation
-
-from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
-from django import forms
 
 from .models import User
+from ..mutation_helpers import *
+
+# Authentication
 
 
 class LoginUser(graphene.Mutation):
@@ -15,9 +14,8 @@ class LoginUser(graphene.Mutation):
 
     ok = graphene.Boolean(required=True)
 
-    def mutate(self, info, username, password):
-        # info.context is the django request
-        user = authenticate(info.context, username=username, password=password)
+    def mutate(self, info, **kwargs):
+        user = authenticate(info.context, **kwargs)
         if user is not None:
             login(info.context, user)
             return LoginUser(ok=True)
@@ -32,18 +30,47 @@ class LogoutUser(graphene.Mutation):
         return LoginUser(ok=True)
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email', 'bio', 'location']
+# User
 
 
-class CreateUser(DjangoModelFormMutation):
-    class Meta:
-        form_class = UserForm
+class CreateUser(ModelMutation, graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
+
+        bio = graphene.String()
+        location = graphene.String()
+
+    def mutate(self, info, **kwargs):
+        user = User(**kwargs)
+        return validate(CreateUser, user)
+
+
+class EditUser(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk_username = graphene.String(required=True)
+
+        email = graphene.String()
+        bio = graphene.String()
+        location = graphene.String()
+        password = graphene.String()
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        user = User.objects.get(username=kwargs.pop('pk_username'))
+        if info.context.user.username != user.username:
+            permission_denied()
+        update(user, kwargs)
+        return validate(EditUser, user)
+
+
+# Top-level
 
 
 class Mutation(graphene.ObjectType):
     login_user = LoginUser.Field()
     logout_user = LogoutUser.Field()
+
     create_user = CreateUser.Field()
+    edit_user = EditUser.Field()
