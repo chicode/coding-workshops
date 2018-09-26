@@ -35,6 +35,19 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
         return validate(EditWorkshop, workshop)
 
 
+class DeleteWorkshop(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        workshop = Workshop.objects.get(pk=kwargs.pop('pk'))
+        if info.context.user != workshop.author:
+            permission_denied()
+        workshop.delete()
+        return DeleteWorkshop(ok=True)
+
+
 # Lesson
 
 
@@ -70,6 +83,19 @@ class EditLesson(ModelMutation, graphene.Mutation):
             permission_denied()
         update(lesson, kwargs)
         return validate(EditLesson, lesson)
+
+
+class DeleteLesson(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        lesson = Lesson.objects.get(pk=kwargs.pop('pk'))
+        if info.context.user != lesson.workshop.author:
+            permission_denied()
+        lesson.delete()
+        return DeleteLesson(ok=True)
 
 
 # Slide
@@ -110,6 +136,19 @@ class EditSlide(ModelMutation, graphene.Mutation):
         return validate(EditSlide, slide)
 
 
+class DeleteSlide(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        slide = Slide.objects.get(pk=kwargs.pop('pk'))
+        if info.context.user != slide.lesson.workshop.author:
+            permission_denied()
+        slide.delete()
+        return DeleteSlide(ok=True)
+
+
 # Direction
 
 
@@ -148,18 +187,35 @@ class EditDirection(ModelMutation, graphene.Mutation):
         return validate(EditDirection, direction)
 
 
+class DeleteDirection(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        direction = Direction.objects.get(pk=kwargs.pop('pk'))
+        if info.context.user != direction.slide.lesson.workshop.author:
+            permission_denied()
+        direction.delete()
+        return DeleteDirection(ok=True)
+
+
 # Top-level
 
 
 class Mutation(graphene.ObjectType):
     create_workshop = CreateWorkshop.Field()
     edit_workshop = EditWorkshop.Field()
+    delete_workshop = DeleteWorkshop.Field()
 
     create_lesson = CreateLesson.Field()
     edit_lesson = EditLesson.Field()
+    delete_lesson = DeleteLesson.Field()
 
     create_slide = CreateSlide.Field()
     edit_slide = EditSlide.Field()
+    delete_slide = DeleteSlide.Field()
 
     create_direction = CreateDirection.Field()
     edit_direction = EditDirection.Field()
+    delete_direction = DeleteDirection.Field()
