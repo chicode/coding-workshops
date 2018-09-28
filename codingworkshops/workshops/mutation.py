@@ -6,18 +6,22 @@ from ..mutation_helpers import *
 # Workshop
 
 
+def workshop_verify(user, obj):
+    return user == obj.author
+
+
 class CreateWorkshop(ModelMutation, graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
 
     @authenticated
     def mutate(self, info, **kwargs):
-        workshop = Workshop(
+        obj = Workshop(
             is_draft=True,
             author=info.context.user,
             **kwargs,
         )
-        return validate(CreateWorkshop, workshop)
+        return validate(obj)
 
 
 class EditWorkshop(ModelMutation, graphene.Mutation):
@@ -28,11 +32,10 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        workshop = Workshop.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != workshop.author:
-            permission_denied()
-        update(workshop, kwargs)
-        return validate(EditWorkshop, workshop)
+        obj = Workshop.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, workshop_verify, obj)
+        update(obj, kwargs)
+        return validate(obj)
 
 
 class DeleteWorkshop(ModelMutation, graphene.Mutation):
@@ -41,14 +44,29 @@ class DeleteWorkshop(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        workshop = Workshop.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != workshop.author:
-            permission_denied()
-        workshop.delete()
-        return DeleteWorkshop(ok=True)
+        obj = Workshop.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, workshop_verify, obj)
+        return delete(obj)
+
+
+class MoveWorkshop(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+        index = graphene.Int(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        obj = Workshop.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, workshop_verify, obj)
+        return move(Workshop, obj, kwargs.get('index'))
 
 
 # Lesson
+
+
+def lesson_verify(user, obj):
+    return user == obj.workshop.author
 
 
 class CreateLesson(ModelMutation, graphene.Mutation):
@@ -56,17 +74,18 @@ class CreateLesson(ModelMutation, graphene.Mutation):
         workshop = graphene.ID(required=True)
 
         index = graphene.Int(required=True)
-        name = graphene.String(required=True)
+        name = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
-        lesson = Lesson(
+        if not kwargs.get('name'):
+            kwargs['name'] = generate_unique_name(Lesson)
+        obj = Lesson(
             workshop=Workshop.objects.get(pk=kwargs.pop('workshop')),
             **kwargs,
         )
-        if info.context.user != lesson.workshop.author:
-            permission_denied()
-        return validate(CreateLesson, lesson)
+        verify_permission(info, lesson_verify, obj)
+        return validate(obj)
 
 
 class EditLesson(ModelMutation, graphene.Mutation):
@@ -78,11 +97,10 @@ class EditLesson(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        lesson = Lesson.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != lesson.workshop.author:
-            permission_denied()
-        update(lesson, kwargs)
-        return validate(EditLesson, lesson)
+        obj = Lesson.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, lesson_verify, obj)
+        update(obj, kwargs)
+        return validate(obj)
 
 
 class DeleteLesson(ModelMutation, graphene.Mutation):
@@ -91,14 +109,29 @@ class DeleteLesson(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        lesson = Lesson.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != lesson.workshop.author:
-            permission_denied()
-        lesson.delete()
-        return DeleteLesson(ok=True)
+        obj = Lesson.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, lesson_verify, obj)
+        return delete(obj)
+
+
+class MoveLesson(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+        index = graphene.Int(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        obj = Lesson.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, lesson_verify, obj)
+        return move(Lesson, obj, kwargs.get('index'))
 
 
 # Slide
+
+
+def slide_verify(user, obj):
+    return user == obj.lesson.workshop.author
 
 
 class CreateSlide(ModelMutation, graphene.Mutation):
@@ -106,17 +139,18 @@ class CreateSlide(ModelMutation, graphene.Mutation):
         lesson = graphene.ID(required=True)
 
         index = graphene.Int(required=True)
-        name = graphene.String(required=True)
+        name = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
-        slide = Slide(
+        if not kwargs.get('name'):
+            kwargs['name'] = generate_unique_name(Lesson)
+        obj = Slide(
             lesson=Lesson.objects.get(pk=kwargs.pop('lesson')),
             **kwargs,
         )
-        if info.context.user != slide.lesson.workshop.author:
-            permission_denied()
-        return validate(CreateSlide, slide)
+        verify_permission(info, slide_verify, obj)
+        return validate(obj)
 
 
 class EditSlide(ModelMutation, graphene.Mutation):
@@ -129,11 +163,10 @@ class EditSlide(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        slide = Slide.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != slide.lesson.workshop.author:
-            permission_denied()
-        update(slide, kwargs)
-        return validate(EditSlide, slide)
+        obj = Slide.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, slide_verify, obj)
+        update(obj, kwargs)
+        return validate(obj)
 
 
 class DeleteSlide(ModelMutation, graphene.Mutation):
@@ -142,14 +175,29 @@ class DeleteSlide(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        slide = Slide.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != slide.lesson.workshop.author:
-            permission_denied()
-        slide.delete()
-        return DeleteSlide(ok=True)
+        obj = Slide.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, slide_verify, obj)
+        return delete(obj)
+
+
+class MoveSlide(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+        index = graphene.Int(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        obj = Slide.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, slide_verify, obj)
+        return move(Slide, obj, kwargs.get('index'))
 
 
 # Direction
+
+
+def direction_verify(user, obj):
+    return user == obj.slide.lesson.workshop.author
 
 
 class CreateDirection(ModelMutation, graphene.Mutation):
@@ -161,13 +209,12 @@ class CreateDirection(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        direction = Direction(
+        obj = Direction(
             slide=Slide.objects.get(pk=kwargs.pop('slide')),
             **kwargs,
         )
-        if info.context.user != direction.slide.lesson.workshop.author:
-            permission_denied()
-        return validate(CreateDirection, direction)
+        verify_permission(info, direction_verify, obj)
+        return validate(obj)
 
 
 class EditDirection(ModelMutation, graphene.Mutation):
@@ -180,11 +227,10 @@ class EditDirection(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        direction = Direction.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != direction.slide.lesson.workshop.author:
-            permission_denied()
-        update(direction, kwargs)
-        return validate(EditDirection, direction)
+        obj = Direction.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, direction_verify, obj)
+        update(obj, kwargs)
+        return validate(obj)
 
 
 class DeleteDirection(ModelMutation, graphene.Mutation):
@@ -193,11 +239,22 @@ class DeleteDirection(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
-        direction = Direction.objects.get(pk=kwargs.pop('pk'))
-        if info.context.user != direction.slide.lesson.workshop.author:
-            permission_denied()
-        direction.delete()
-        return DeleteDirection(ok=True)
+        obj = Direction.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, direction_verify, obj)
+        return delete(obj)
+
+
+class MoveDirection(ModelMutation, graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+        index = graphene.Int(required=True)
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        obj = Direction.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, direction_verify, obj)
+        return move(Direction, obj, kwargs.get('index'))
 
 
 # Top-level
@@ -211,11 +268,14 @@ class Mutation(graphene.ObjectType):
     create_lesson = CreateLesson.Field()
     edit_lesson = EditLesson.Field()
     delete_lesson = DeleteLesson.Field()
+    move_lesson = MoveLesson.Field()
 
     create_slide = CreateSlide.Field()
     edit_slide = EditSlide.Field()
     delete_slide = DeleteSlide.Field()
+    move_slide = MoveSlide.Field()
 
     create_direction = CreateDirection.Field()
     edit_direction = EditDirection.Field()
     delete_direction = DeleteDirection.Field()
+    move_direction = MoveDirection.Field()

@@ -1,5 +1,20 @@
-import graphene
 from django.core.exceptions import ValidationError
+from django.db.models import F
+import graphene
+
+
+class ModelError(graphene.ObjectType):
+    field = graphene.String(required=True)
+    message = graphene.String(required=True)
+
+
+class MutationResult(graphene.ObjectType):
+    ok = graphene.Boolean(required=True)
+    errors = graphene.List(ModelError)
+
+
+class ModelMutation(graphene.ObjectType):
+    Output = MutationResult
 
 
 def create_errors(error_dict):
@@ -9,18 +24,43 @@ def create_errors(error_dict):
     ]
 
 
-def validate(cls, model):
+def validate(model):
     try:
         model.full_clean()
     except ValidationError as e:
-        return cls(ok=False, errors=create_errors(e.message_dict))
+        return MutationResult(ok=False, errors=create_errors(e.message_dict))
     model.save()
-    return cls(ok=True)
+    return MutationResult(ok=True)
 
 
 def update(model, fields):
     for key, value in fields.items():
         setattr(model, key, value)
+
+
+def delete(obj):
+    obj.delete()
+    return MutationResult(ok=True)
+
+
+def move(cls, obj, index):
+    # change the id to avoid uniqueness violation error
+    old_index = obj.index
+    obj.index = -1
+    obj.save()
+    # change other object ids
+    if old_index < index:
+        cls.objects.filter(
+            index__gt=old_index, index__lte=index
+        ).update(index=F('index') - 1)
+    elif old_index > index:
+        cls.objects.filter(
+            index__gte=index, index__lt=old_index
+        ).update(index=F('index') + 1)
+    # set the id to the new id
+    obj.index = index
+    obj.save()
+    return MutationResult(ok=True)
 
 
 def authenticated(func):
@@ -36,11 +76,15 @@ def permission_denied():
     raise Exception('Permission denied')
 
 
-class ModelError(graphene.ObjectType):
-    field = graphene.String(required=True)
-    message = graphene.String(required=True)
+def verify_permission(info, verify, obj):
+    if not verify(info.context.user, obj):
+        permission_denied()
 
 
-class ModelMutation:
-    ok = graphene.Boolean(required=True)
-    errors = graphene.List(ModelError)
+def generate_unique_name(model, name='untitled'):
+    unique_name = name
+    num = 0
+    while model.objects.filter(name=unique_name).exists():
+        unique_name = f'{name} {num}'
+        num += 1
+    return unique_name

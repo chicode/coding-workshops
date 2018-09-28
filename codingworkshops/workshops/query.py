@@ -44,6 +44,10 @@ class Query(graphene.ObjectType):
         human=graphene.String(required=True),
         workshop=graphene.String(required=True)
     )
+    user_workshops = graphene.List(
+        WorkshopType,
+        human=graphene.String(required=True),
+    )
 
     def resolve_all_workshops(self, info):
         return Workshop.objects.all()
@@ -54,11 +58,19 @@ class Query(graphene.ObjectType):
             author=User.objects.get(username=human), slug=workshop
         )
 
+    def resolve_user_workshops(self, info, human):
+        return Workshop.objects.filter(author=User.objects.get(username=human))
+
     lesson = graphene.Field(
         LessonType,
         human=graphene.String(required=True),
         workshop=graphene.String(required=True),
         lesson=graphene.Int(required=True),
+    )
+    workshop_lessons = graphene.List(
+        LessonType,
+        human=graphene.String(required=True),
+        workshop=graphene.String(required=True),
     )
 
     @protect
@@ -69,12 +81,24 @@ class Query(graphene.ObjectType):
             index=lesson
         )
 
+    def resolve_workshop_lessons(self, info, human, workshop):
+        return Lesson.objects.filter(
+            workshop__author=User.objects.get(username=human),
+            workshop__slug=workshop,
+        )
+
     slide = graphene.Field(
         SlideType,
         human=graphene.String(required=True),
         workshop=graphene.String(required=True),
         lesson=graphene.Int(required=True),
         slide=graphene.Int(required=True)
+    )
+    lesson_slides = graphene.List(
+        SlideType,
+        human=graphene.String(required=True),
+        workshop=graphene.String(required=True),
+        lesson=graphene.Int(required=True),
     )
 
     @protect
@@ -84,4 +108,11 @@ class Query(graphene.ObjectType):
             lesson__workshop__slug=workshop,
             lesson__index=lesson,
             index=slide
+        )
+
+    def resolve_lesson_slides(self, info, human, workshop, lesson):
+        return Slide.objects.filter(
+            lesson__workshop__author=User.objects.get(username=human),
+            lesson__workshop__slug=workshop,
+            lesson__index=lesson
         )

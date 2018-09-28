@@ -44,7 +44,7 @@ class CreateUser(ModelMutation, graphene.Mutation):
 
     def mutate(self, info, **kwargs):
         user = User(**kwargs)
-        return validate(CreateUser, user)
+        return validate(user)
 
 
 class EditUser(ModelMutation, graphene.Mutation):
@@ -62,7 +62,7 @@ class EditUser(ModelMutation, graphene.Mutation):
         if info.context.user.username != user.username:
             permission_denied()
         update(user, kwargs)
-        return validate(EditUser, user)
+        return validate(user)
 
 
 # Top-level
