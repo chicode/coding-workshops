@@ -11,6 +11,7 @@ class ModelError(graphene.ObjectType):
 class MutationResult(graphene.ObjectType):
     ok = graphene.Boolean(required=True)
     errors = graphene.List(ModelError)
+    pk = graphene.ID()
 
 
 class ModelMutation(graphene.ObjectType):
@@ -30,7 +31,7 @@ def validate(model):
     except ValidationError as e:
         return MutationResult(ok=False, errors=create_errors(e.message_dict))
     model.save()
-    return MutationResult(ok=True)
+    return MutationResult(ok=True, pk=model.pk)
 
 
 def update(model, fields):
