@@ -82,10 +82,10 @@ def verify_permission(info, verify, obj):
         permission_denied()
 
 
-def generate_unique_name(model, name='untitled'):
+def generate_unique_name(model, name='untitled', **filters):
     unique_name = name
     num = 0
-    while model.objects.filter(name=unique_name).exists():
+    while model.objects.filter(name=unique_name, **filters).exists():
         unique_name = f'{name} {num}'
         num += 1
     return unique_name
