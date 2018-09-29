@@ -73,15 +73,16 @@ class CreateLesson(ModelMutation, graphene.Mutation):
     class Arguments:
         workshop = graphene.ID(required=True)
 
-        index = graphene.Int(required=True)
         name = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
+        workshop = Workshop.objects.get(pk=kwargs.pop('workshop'))
         if not kwargs.get('name'):
-            kwargs['name'] = generate_unique_name(Lesson)
+            kwargs['name'] = generate_unique_name(Lesson, workshop=workshop)
         obj = Lesson(
-            workshop=Workshop.objects.get(pk=kwargs.pop('workshop')),
+            workshop=workshop,
+            index=Lesson.objects.filter(workshop=workshop).count() + 1,
             **kwargs,
         )
         verify_permission(info, lesson_verify, obj)
@@ -138,15 +139,16 @@ class CreateSlide(ModelMutation, graphene.Mutation):
     class Arguments:
         lesson = graphene.ID(required=True)
 
-        index = graphene.Int(required=True)
         name = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
+        lesson = Lesson.objects.get(pk=kwargs.pop('lesson'))
         if not kwargs.get('name'):
-            kwargs['name'] = generate_unique_name(Lesson)
+            kwargs['name'] = generate_unique_name(Slide, lesson=lesson)
         obj = Slide(
-            lesson=Lesson.objects.get(pk=kwargs.pop('lesson')),
+            lesson=lesson,
+            index=Slide.objects.filter(lesson=lesson).count() + 1,
             **kwargs,
         )
         verify_permission(info, slide_verify, obj)
@@ -204,13 +206,14 @@ class CreateDirection(ModelMutation, graphene.Mutation):
     class Arguments:
         slide = graphene.ID(required=True)
 
-        index = graphene.Int(required=True)
         description = graphene.String(required=True)
 
     @authenticated
     def mutate(self, info, **kwargs):
+        slide = Slide.objects.get(pk=kwargs.pop('slide'))
         obj = Direction(
-            slide=Slide.objects.get(pk=kwargs.pop('slide')),
+            slide=slide,
+            index=Direction.objects.filter(slide=slide).count() + 1,
             **kwargs,
         )
         verify_permission(info, direction_verify, obj)
