@@ -52,7 +52,6 @@ class Query(graphene.ObjectType):
     def resolve_all_workshops(self, info):
         return Workshop.objects.all()
 
-    @protect
     def resolve_workshop(self, info, human, workshop):
         return Workshop.objects.get(
             author=User.objects.get(username=human), slug=workshop
@@ -73,7 +72,6 @@ class Query(graphene.ObjectType):
         workshop=graphene.String(required=True),
     )
 
-    @protect
     def resolve_lesson(self, info, human, workshop, lesson):
         return Lesson.objects.get(
             workshop__author=User.objects.get(username=human),
@@ -101,7 +99,6 @@ class Query(graphene.ObjectType):
         lesson=graphene.Int(required=True),
     )
 
-    @protect
     def resolve_slide(self, info, human, workshop, lesson, slide):
         return Slide.objects.get(
             lesson__workshop__author=User.objects.get(username=human),
