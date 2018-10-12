@@ -10,7 +10,7 @@ from .models import User
 class UserType(graphene_django.types.DjangoObjectType):
     class Meta:
         model = User
-        exclude_fields = ['password']
+        only_fields = ['username', 'email', 'bio', 'location']
 
 
 class Query(graphene.ObjectType):
