@@ -112,7 +112,7 @@ class DeleteLesson(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Lesson.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, lesson_verify, obj)
-        return delete(obj)
+        return delete_indexed(Lesson, obj)
 
 
 class MoveLesson(ModelMutation, graphene.Mutation):
@@ -179,7 +179,7 @@ class DeleteSlide(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Slide.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, slide_verify, obj)
-        return delete(obj)
+        return delete_indexed(Slide, obj)
 
 
 class MoveSlide(ModelMutation, graphene.Mutation):
@@ -244,7 +244,7 @@ class DeleteDirection(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Direction.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, direction_verify, obj)
-        return delete(obj)
+        return delete_indexed(Direction, obj)
 
 
 class MoveDirection(ModelMutation, graphene.Mutation):

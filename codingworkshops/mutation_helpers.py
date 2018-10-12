@@ -44,6 +44,12 @@ def delete(obj):
     return MutationResult(ok=True)
 
 
+def delete_indexed(cls, obj):
+    obj.delete()
+    cls.objects.filter(index__gt=obj.index).update(index=F('index') - 1)
+    return MutationResult(ok=True)
+
+
 def move(cls, obj, index):
     # change the id to avoid uniqueness violation error
     old_index = obj.index
