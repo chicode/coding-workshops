@@ -49,19 +49,6 @@ class DeleteWorkshop(ModelMutation, graphene.Mutation):
         return delete(obj)
 
 
-class MoveWorkshop(ModelMutation, graphene.Mutation):
-    class Arguments:
-        pk = graphene.ID(required=True)
-
-        index = graphene.Int(required=True)
-
-    @authenticated
-    def mutate(self, info, **kwargs):
-        obj = Workshop.objects.get(pk=kwargs.pop('pk'))
-        verify_permission(info, workshop_verify, obj)
-        return move(Workshop, obj, kwargs.get('index'))
-
-
 # Lesson
 
 
@@ -125,7 +112,10 @@ class MoveLesson(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Lesson.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, lesson_verify, obj)
-        return move(Lesson, obj, kwargs.get('index'))
+        return move(
+            Lesson, {'workshop__pk': obj.workshop.pk}, obj,
+            kwargs.get('index')
+        )
 
 
 # Slide
@@ -192,7 +182,9 @@ class MoveSlide(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Slide.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, slide_verify, obj)
-        return move(Slide, obj, kwargs.get('index'))
+        return move(
+            Slide, {'lesson__pk': obj.lesson.pk}, obj, kwargs.get('index')
+        )
 
 
 # Direction
@@ -257,7 +249,9 @@ class MoveDirection(ModelMutation, graphene.Mutation):
     def mutate(self, info, **kwargs):
         obj = Direction.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, direction_verify, obj)
-        return move(Direction, obj, kwargs.get('index'))
+        return move(
+            Direction, {'slide__pk': obj.slide.pk}, obj, kwargs.get('index')
+        )
 
 
 # Top-level

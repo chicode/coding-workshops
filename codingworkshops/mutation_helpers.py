@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import F
+from django.db import IntegrityError, transaction
 import graphene
 
 
@@ -50,23 +51,48 @@ def delete_indexed(cls, obj):
     return MutationResult(ok=True)
 
 
-def move(cls, obj, index):
-    # change the id to avoid uniqueness violation error
-    old_index = obj.index
-    obj.index = -1
-    obj.save()
-    # change other object ids
-    if old_index < index:
-        cls.objects.filter(
-            index__gt=old_index, index__lte=index
-        ).update(index=F('index') - 1)
-    elif old_index > index:
-        cls.objects.filter(
-            index__gte=index, index__lt=old_index
-        ).update(index=F('index') + 1)
-    # set the id to the new id
-    obj.index = index
-    obj.save()
+def move(cls, initial_filters, obj, index):
+    try:
+        # atomic transaction necessary because they may still go wrong
+        with transaction.atomic():
+            # change the id to avoid uniqueness violation error
+            old_index = obj.index
+            if old_index == index:
+                return
+
+            # 0 is the reserved index for temp values
+            obj.index = 0
+            obj.save()
+
+            objs = None
+            if old_index < index:
+                objs = cls.objects.filter(
+                    **initial_filters, index__gt=old_index, index__lte=index
+                )
+            elif old_index > index:
+                objs = cls.objects.filter(
+                    **initial_filters, index__gte=index, index__lt=old_index
+                )
+            # this step is necessary so that the list of objects does not change in the temp step
+            pks = list(objs.values_list('pk', flat=True))
+            objs = cls.objects.filter(pk__in=pks)
+
+            # first all of the indexes are set to their negative counterparts, to prevent unique constraint violations
+            objs.update(index=F('index') * -1)
+            # then they are set to the correct value
+            if old_index < index:
+                objs.update(index=F('index') * -1 - 1)
+            elif old_index > index:
+                objs.update(index=F('index') * -1 + 1)
+
+            # finally, the original obj's index is reset from 0
+            obj.index = index
+            obj.save()
+
+    except IntegrityError:
+        print('Error changing index!')
+        print(f'old index: {old_index}, new index: {index}')
+
     return MutationResult(ok=True)
 
 
