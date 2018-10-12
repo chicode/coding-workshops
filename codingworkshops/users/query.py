@@ -15,16 +15,16 @@ class UserType(graphene_django.types.DjangoObjectType):
 
 class Query(graphene.ObjectType):
     all_users = graphene.List(UserType)
-    user = graphene.Field(UserType, username=graphene.String(required=True))
+    user = graphene.Field(UserType, human=graphene.String(required=True))
     current_user = graphene.Field(UserType)
 
-    def resolve_all_users(self, info, **kwargs):
+    def resolve_all_users(self, info):
         return User.objects.all()
 
-    def resolve_user(self, info, **kwargs):
-        return User.objects.get(username=kwargs.get('username'))
+    def resolve_user(self, info, human):
+        return User.objects.get(username=human)
 
-    def resolve_current_user(self, info, **kwargs):
+    def resolve_current_user(self, info):
         if info.context.user.is_authenticated:
             return info.context.user
         return None
