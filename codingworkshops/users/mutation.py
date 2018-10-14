@@ -1,5 +1,7 @@
 import graphene
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.hashers import make_password
 
 from .models import User
 from ..mutation_helpers import *
@@ -43,7 +45,16 @@ class CreateUser(ModelMutation, graphene.Mutation):
         location = graphene.String()
 
     def mutate(self, info, **kwargs):
-        user = User(**kwargs)
+        password = kwargs.get('password')
+        user = User(password=make_password(kwargs.pop('password')), **kwargs)
+        try:
+            validate_password(password, user=user)
+        except ValidationError as e:
+            return MutationResult(
+                ok=False, errors=create_errors({
+                    'password': e.messages
+                })
+            )
         return validate(user)
 
 
