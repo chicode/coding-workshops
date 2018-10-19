@@ -47,7 +47,15 @@ def delete(obj):
 
 def delete_indexed(cls, obj):
     obj.delete()
-    cls.objects.filter(index__gt=obj.index).update(index=F('index') - 1)
+
+    # see the move function for the reason behind this mess
+    # TODO fix this redundant code
+    objs = cls.objects.filter(index__gt=obj.index)
+    pks = list(objs.values_list('pk', flat=True))
+    objs = cls.objects.filter(pk__in=pks)
+
+    objs.update(index=F('index') * -1)
+    objs.update(index=F('index') * -1 - 1)
     return MutationResult(ok=True)
 
 
