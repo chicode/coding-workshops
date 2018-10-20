@@ -10,7 +10,7 @@ from ..mutation_helpers import *
 
 
 def workshop_verify(user, obj):
-    return user == obj.author or user in obj.contributors
+    return user == obj.author or user in obj.contributors.all()
 
 
 class CreateWorkshop(ModelMutation, graphene.Mutation):
@@ -83,7 +83,8 @@ class DeleteWorkshop(ModelMutation, graphene.Mutation):
 
 
 def lesson_verify(user, obj):
-    return user == obj.workshop.author or user in obj.workshop.contributors
+    return user == obj.workshop.author or user in obj.workshop.contributors.all(
+    )
 
 
 class CreateLesson(ModelMutation, graphene.Mutation):
@@ -152,7 +153,8 @@ class MoveLesson(ModelMutation, graphene.Mutation):
 
 
 def slide_verify(user, obj):
-    return user == obj.lesson.workshop.author or user in obj.lesson.workshop.contributors
+    return user == obj.lesson.workshop.author or user in obj.lesson.workshop.contributors.all(
+    )
 
 
 class CreateSlide(ModelMutation, graphene.Mutation):
@@ -221,7 +223,8 @@ class MoveSlide(ModelMutation, graphene.Mutation):
 
 
 def direction_verify(user, obj):
-    return user == obj.slide.lesson.workshop.author or user in obj.slide.lesson.workshop.contributors
+    return user == obj.slide.lesson.workshop.author or user in obj.slide.lesson.workshop.contributors.all(
+    )
 
 
 class CreateDirection(ModelMutation, graphene.Mutation):
