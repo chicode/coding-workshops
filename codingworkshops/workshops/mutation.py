@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 import graphene
 
 from .models import Workshop, Lesson, Slide, Direction
@@ -39,6 +41,25 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
 
         # only the author can modify contributors
         if info.context.user == obj.author:
+            for contributor in kwargs.get('contributors'):
+                if contributor == obj.author.username:
+                    return create_error(
+                        field='contributors',
+                        message='you cannot add yourself as a contributor'
+                    )
+                elif contributor in kwargs.get('contributors'):
+                    return create_error(
+                        field='contributors',
+                        message='contributor already exists'
+                    )
+                try:
+                    User.objects.get(username=contributor)
+                except ObjectDoesNotExist:
+                    return create_error(
+                        field='contributors',
+                        message='username does not exist'
+                    )
+
             obj.contributors.set(
                 User.objects.filter(username__in=kwargs.pop('contributors'))
             )

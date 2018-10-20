@@ -129,3 +129,7 @@ def generate_unique_name(model, name='untitled', **filters):
         unique_name = f'{name} {num}'
         num += 1
     return unique_name
+
+
+def create_error(**kwargs):
+    return MutationResult(ok=False, errors=[ModelError(**kwargs)])
