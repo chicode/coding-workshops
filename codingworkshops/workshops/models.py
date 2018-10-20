@@ -23,6 +23,9 @@ class Workshop(models.Model):
     description = models.CharField(max_length=500, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     is_draft = models.BooleanField()
+    contributors = models.ManyToManyField(
+        User, related_name='contributed_workshop_set'
+    )
 
 
 class Lesson(models.Model):

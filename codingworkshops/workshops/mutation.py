@@ -1,13 +1,14 @@
 import graphene
 
 from .models import Workshop, Lesson, Slide, Direction
+from codingworkshops.users.models import User
 from ..mutation_helpers import *
 
 # Workshop
 
 
 def workshop_verify(user, obj):
-    return user == obj.author
+    return user == obj.author or user in obj.contributors
 
 
 class CreateWorkshop(ModelMutation, graphene.Mutation):
@@ -29,11 +30,19 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
         pk = graphene.ID(required=True)
 
         description = graphene.String()
+        contributors = graphene.List(graphene.NonNull(graphene.String))
 
     @authenticated
     def mutate(self, info, **kwargs):
         obj = Workshop.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, workshop_verify, obj)
+
+        # only the author can modify contributors
+        if info.context.user == obj.author:
+            obj.contributors.set(
+                User.objects.filter(username__in=kwargs.pop('contributors'))
+            )
+
         update(obj, kwargs)
         return validate(obj)
 
@@ -53,7 +62,7 @@ class DeleteWorkshop(ModelMutation, graphene.Mutation):
 
 
 def lesson_verify(user, obj):
-    return user == obj.workshop.author
+    return user == obj.workshop.author or user in obj.workshop.contributors
 
 
 class CreateLesson(ModelMutation, graphene.Mutation):
@@ -122,7 +131,7 @@ class MoveLesson(ModelMutation, graphene.Mutation):
 
 
 def slide_verify(user, obj):
-    return user == obj.lesson.workshop.author
+    return user == obj.lesson.workshop.author or user in obj.lesson.workshop.contributors
 
 
 class CreateSlide(ModelMutation, graphene.Mutation):
@@ -191,7 +200,7 @@ class MoveSlide(ModelMutation, graphene.Mutation):
 
 
 def direction_verify(user, obj):
-    return user == obj.slide.lesson.workshop.author
+    return user == obj.slide.lesson.workshop.author or user in obj.slide.lesson.workshop.contributors
 
 
 class CreateDirection(ModelMutation, graphene.Mutation):
