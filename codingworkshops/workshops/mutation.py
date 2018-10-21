@@ -42,16 +42,6 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
         # only the author can modify contributors
         if info.context.user == obj.author:
             for contributor in kwargs.get('contributors'):
-                if contributor == obj.author.username:
-                    return create_error(
-                        field='contributors',
-                        message='you cannot add yourself as a contributor'
-                    )
-                elif contributor in kwargs.get('contributors'):
-                    return create_error(
-                        field='contributors',
-                        message='contributor already exists'
-                    )
                 try:
                     User.objects.get(username=contributor)
                 except ObjectDoesNotExist:
@@ -60,9 +50,25 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
                         message='username does not exist'
                     )
 
+                if contributor == obj.author.username:
+                    return create_error(
+                        field='contributors',
+                        message='you cannot add yourself as a contributor'
+                    )
+                elif contributor in obj.contributors.values_list(
+                    'username', flat=True
+                ):
+                    return create_error(
+                        field='contributors',
+                        message='contributor already exists'
+                    )
+
             obj.contributors.set(
                 User.objects.filter(username__in=kwargs.pop('contributors'))
             )
+        else:
+            # get rid of argument
+            kwargs.pop('contributors')
 
         update(obj, kwargs)
         return validate(obj)
