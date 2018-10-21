@@ -98,8 +98,11 @@ def move(cls, initial_filters, obj, index):
             obj.save()
 
     except IntegrityError:
-        print('Error changing index!')
-        print(f'old index: {old_index}, new index: {index}')
+        index = 1
+        for slide_obj in cls.objects.filter(**initial_filters):
+            slide_obj.index = index
+            slide_obj.save()
+            index += 1
 
     return MutationResult(ok=True)
 
