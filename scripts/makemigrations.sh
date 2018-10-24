@@ -1,3 +1,4 @@
 #! /bin/bash
 
-docker-compose run web pipenv run /codingworkshops/manage.py makemigrations
+docker-compose run web poetry run /codingworkshops/manage.py makemigrations
+

@@ -5,15 +5,15 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /codingworkshops
 
-RUN pip install pipenv
-COPY ./Pipfile Pipfile
-COPY ./Pipfile.lock Pipfile.lock
-RUN pipenv install
+RUN pip install poetry
+COPY ./pyproject.toml pyproject.toml
+COPY ./poetry.lock poetry.lock
+RUN poetry install --no-dev
 
 COPY ./codingworkshops codingworkshops
 COPY ./manage.py .
 
-CMD pipenv run ./manage.py runserver 0.0.0.0:8000
+CMD poetry run ./manage.py runserver 0.0.0.0:8000
 EXPOSE 8000
 
 
