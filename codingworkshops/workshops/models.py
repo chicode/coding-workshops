@@ -26,6 +26,7 @@ class Workshop(models.Model):
     contributors = models.ManyToManyField(
         User, related_name='contributed_workshop_set'
     )
+    source_url = models.URLField(max_length=300, blank=True)
 
 
 class Lesson(models.Model):

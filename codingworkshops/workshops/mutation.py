@@ -1,4 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+
+import requests
+import requests.exceptions
+from ruamel.yaml import YAML
 
 import graphene
 
@@ -33,42 +38,48 @@ class EditWorkshop(ModelMutation, graphene.Mutation):
 
         description = graphene.String()
         contributors = graphene.List(graphene.NonNull(graphene.String))
+        source_url = graphene.String()
 
     @authenticated
     def mutate(self, info, **kwargs):
         obj = Workshop.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, workshop_verify, obj)
 
-        # only the author can modify contributors
-        if info.context.user == obj.author:
-            for contributor in kwargs.get('contributors'):
-                try:
-                    User.objects.get(username=contributor)
-                except ObjectDoesNotExist:
-                    return create_error(
-                        field='contributors',
-                        message='username does not exist'
-                    )
+        if kwargs.get('contributors'):
+            # only the author can modify contributors
+            if info.context.user == obj.author:
+                for contributor in kwargs.get('contributors'):
+                    try:
+                        User.objects.get(username=contributor)
+                    except ObjectDoesNotExist:
+                        return create_error(
+                            field='contributors',
+                            message='username does not exist'
+                        )
 
-                if contributor == obj.author.username:
-                    return create_error(
-                        field='contributors',
-                        message='you cannot add yourself as a contributor'
-                    )
-                elif contributor in obj.contributors.values_list(
-                    'username', flat=True
-                ):
-                    return create_error(
-                        field='contributors',
-                        message='contributor already exists'
-                    )
+                    if contributor == obj.author.username:
+                        return create_error(
+                            field='contributors',
+                            message='you cannot add yourself as a contributor'
+                        )
+                    elif contributor in obj.contributors.values_list(
+                        'username', flat=True
+                    ):
+                        return create_error(
+                            field='contributors',
+                            message='contributor already exists'
+                        )
 
-            obj.contributors.set(
-                User.objects.filter(username__in=kwargs.pop('contributors'))
-            )
-        else:
-            # get rid of argument
-            kwargs.pop('contributors')
+                obj.contributors.set(
+                    User.objects.filter(
+                        username__in=kwargs.pop('contributors')
+                    )
+                )
+            else:
+                # get rid of argument
+                kwargs.pop('contributors')
+
+        print(kwargs)
 
         update(obj, kwargs)
         return validate(obj)
@@ -83,6 +94,67 @@ class DeleteWorkshop(ModelMutation, graphene.Mutation):
         obj = Workshop.objects.get(pk=kwargs.pop('pk'))
         verify_permission(info, workshop_verify, obj)
         return delete(obj)
+
+
+class SyncWorkshop(graphene.Mutation):
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    ok = graphene.Boolean(required=True)
+    error = graphene.String()
+
+    @authenticated
+    def mutate(self, info, **kwargs):
+        obj = Workshop.objects.get(pk=kwargs.pop('pk'))
+        verify_permission(info, workshop_verify, obj)
+
+        try:
+            with transaction.atomic():
+                r = requests.get(obj.source_url)
+                yaml = YAML(typ='safe')
+
+                Direction.objects.filter(slide__lesson__workshop=obj).delete()
+                Slide.objects.filter(lesson__workshop=obj).delete()
+                Lesson.objects.filter(workshop=obj).delete()
+
+                workshop = yaml.load(r.text)
+
+                obj.name = workshop['name']
+                obj.description = workshop.get('description', '')
+                obj.save()
+
+                for lesson_index, lesson in enumerate(workshop['lessons']):
+                    lesson_obj = Lesson.objects.create(
+                        name=lesson['name'],
+                        description=lesson.get('description', ''),
+                        index=lesson_index + 1,
+                        workshop=obj,
+                    )
+                    for slide_index, slide in enumerate(
+                        lesson.get('slides', [])
+                    ):
+                        slide_obj = Slide.objects.create(
+                            name=slide['name'],
+                            description=slide.get('description', ''),
+                            index=slide_index + 1,
+                            lesson=lesson_obj
+                        )
+                        for direction_index, direction in enumerate(
+                            slide.get('directions', [])
+                        ):
+                            Direction.objects.create(
+                                description=direction,
+                                index=direction_index + 1,
+                                slide=slide_obj
+                            )
+
+        except requests.exceptions.RequestException as e:
+            print(e)
+            return SyncWorkshop(
+                ok=False, error="Couldn't complete the request"
+            )
+
+        return SyncWorkshop(ok=True)
 
 
 # Lesson
@@ -300,6 +372,7 @@ class Mutation(graphene.ObjectType):
     create_workshop = CreateWorkshop.Field()
     edit_workshop = EditWorkshop.Field()
     delete_workshop = DeleteWorkshop.Field()
+    sync_workshop = SyncWorkshop.Field()
 
     create_lesson = CreateLesson.Field()
     edit_lesson = EditLesson.Field()
