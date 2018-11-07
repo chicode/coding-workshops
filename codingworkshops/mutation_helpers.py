@@ -45,17 +45,27 @@ def delete(obj):
     return MutationResult(ok=True)
 
 
-def delete_indexed(cls, obj):
-    obj.delete()
+def delete_indexed(cls, initial_filters, obj):
+    try:
+        with transaction.atomic():
+            obj.delete()
 
-    # see the move function for the reason behind this mess
-    # TODO fix this redundant code
-    objs = cls.objects.filter(index__gt=obj.index)
-    pks = list(objs.values_list('pk', flat=True))
-    objs = cls.objects.filter(pk__in=pks)
+            # see the move function for the reason behind this mess
+            # TODO fix this redundant code
+            objs = cls.objects.filter(**initial_filters, index__gt=obj.index)
+            pks = list(objs.values_list('pk', flat=True))
+            objs = cls.objects.filter(pk__in=pks)
 
-    objs.update(index=F('index') * -1)
-    objs.update(index=F('index') * -1 - 1)
+            objs.update(index=F('index') * -1)
+            objs.update(index=F('index') * -1 - 1)
+
+    except IntegrityError:
+        index = 1
+        for obj in cls.objects.filter(**initial_filters):
+            obj.index = index
+            obj.save()
+            index += 1
+
     return MutationResult(ok=True)
 
 
@@ -99,9 +109,9 @@ def move(cls, initial_filters, obj, index):
 
     except IntegrityError:
         index = 1
-        for slide_obj in cls.objects.filter(**initial_filters):
-            slide_obj.index = index
-            slide_obj.save()
+        for obj in cls.objects.filter(**initial_filters):
+            obj.index = index
+            obj.save()
             index += 1
 
     return MutationResult(ok=True)
