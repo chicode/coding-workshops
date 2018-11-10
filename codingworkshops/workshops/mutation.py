@@ -24,6 +24,9 @@ class CreateWorkshop(ModelMutation, graphene.Mutation):
 
     @authenticated
     def mutate(self, info, **kwargs):
+        if not info.context.user.is_superuser:
+            permission_denied()
+
         obj = Workshop(
             is_draft=True,
             author=info.context.user,
